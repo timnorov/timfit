@@ -80,7 +80,7 @@ TF.cardio = {
               <input type="number" step="0.1" id="cardioDist" class="form-input" placeholder="0.0">
             </div>
             <div class="form-field">
-              <div class="form-label">${TF.i18n.t('cardio.duration')} (min)</div>
+              <div class="form-label">${TF.i18n.t('cardio.duration')}</div>
               <input type="number" id="cardioDur" class="form-input" placeholder="0">
             </div>
           </div>

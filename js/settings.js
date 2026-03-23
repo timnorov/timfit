@@ -209,7 +209,16 @@ TF.settings = {
     const profile = TF.data.getProfile();
     profile.name = document.getElementById('settingsName').value || 'Tim';
     profile.dob = document.getElementById('settingsDOB').value || '';
-    profile.age = parseInt(document.getElementById('settingsAge').value) || 44;
+    if (profile.dob) {
+      const today = new Date();
+      const birth = new Date(profile.dob);
+      let age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+      profile.age = age;
+    } else {
+      profile.age = parseInt(document.getElementById('settingsAge').value) || 44;
+    }
     profile.height = parseInt(document.getElementById('settingsHeight').value) || 182;
     profile.startingWeight = parseFloat(document.getElementById('settingsStartWeight').value) || 83;
     profile.startingBodyFat = parseFloat(document.getElementById('settingsStartBF').value) || 23;

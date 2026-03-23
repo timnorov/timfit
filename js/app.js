@@ -260,7 +260,15 @@ TF.app = {
 
     const header = document.createElement('div');
     header.className = 'section-header';
-    header.innerHTML = `<h2 class="section-title">${TF.i18n.t('workout.week')}</h2>`;
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between';
+    const lang = TF.i18n.getLang();
+    header.innerHTML = `
+      <h2 class="section-title">${TF.i18n.t('workout.week')}</h2>
+      <button onclick="TF.library.open()"
+              style="color:var(--accent);font-size:14px;font-weight:600;padding:4px 8px;background:rgba(0,122,255,0.1);border-radius:8px">
+        ${lang === 'ru' ? 'Упражнения' : 'Exercises'}
+      </button>
+    `;
     container.appendChild(header);
 
     const weekDates = TF.utils.getWeekDates();

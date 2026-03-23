@@ -1,4 +1,4 @@
-const CACHE_NAME = 'timfit-v2';
+const CACHE_NAME = 'timfit-v3';
 const ASSETS = [
   './index.html',
   './manifest.json',
@@ -16,6 +16,7 @@ const ASSETS = [
   './js/photos.js',
   './js/cardio.js',
   './js/settings.js',
+  './js/library.js',
   './js/app.js',
   './assets/icons/icon.svg',
   './assets/icons/icon-192.png',

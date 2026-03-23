@@ -31,7 +31,7 @@
   --safe-bottom: env(safe-area-inset-bottom, 34px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
-  --tab-bar-height: 82px;
+  --tab-bar-height: 49px;
   --header-height: 96px;
   --radius: 16px;
   --radius-sm: 10px;
@@ -313,7 +313,6 @@ a { color: var(--accent); text-decoration: none; }
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--border);
   padding-bottom: var(--safe-bottom);
-  height: var(--tab-bar-height);
   position: relative;
   z-index: 100;
 }
@@ -325,7 +324,8 @@ a { color: var(--accent); text-decoration: none; }
   align-items: center;
   justify-content: center;
   gap: 3px;
-  padding: 8px 4px 0;
+  padding: 8px 4px 6px;
+  height: var(--tab-bar-height);
   color: var(--text3);
   font-size: 10px;
   font-weight: 500;
@@ -1040,6 +1040,11 @@ a { color: var(--accent); text-decoration: none; }
   padding-right: 16px;
   text-align: right;
 }
+.settings-select[type="date"] {
+  -webkit-appearance: auto;
+  appearance: auto;
+  padding-right: 0;
+}
 
 /* =============================================
    SESSION SUMMARY MODAL
@@ -1339,3 +1344,115 @@ a { color: var(--accent); text-decoration: none; }
 
 /* Focus styles for accessibility */
 button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* =============================================
+   EXERCISE LIBRARY
+   ============================================= */
+#libraryPanel {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 550;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(var(--safe-bottom) + 16px);
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+#libraryPanel.lib-visible {
+  transform: translateX(0);
+}
+#libraryPanel.hidden {
+  transform: translateX(100%);
+}
+
+.lib-header {
+  display: flex; align-items: center;
+  padding: calc(var(--safe-top) + 12px) 16px 12px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: var(--bg);
+  z-index: 10;
+}
+.lib-back {
+  color: var(--accent); font-size: 17px; font-weight: 500;
+  padding: 4px 0; min-width: 60px;
+  background: none; border: none; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.lib-title {
+  flex: 1; text-align: center;
+  font-size: 17px; font-weight: 700;
+  color: var(--text);
+}
+
+.lib-filters {
+  display: flex; gap: 8px;
+  padding: 12px 16px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.lib-filters::-webkit-scrollbar { display: none; }
+.lib-filter-btn {
+  padding: 6px 16px; border-radius: 20px;
+  font-size: 14px; font-weight: 600; white-space: nowrap;
+  background: var(--bg-card2); color: var(--text3);
+  border: 1px solid var(--border);
+  transition: background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+.lib-filter-btn.active {
+  background: var(--accent); color: white; border-color: var(--accent);
+}
+
+.lib-list { padding: 8px 16px; }
+
+.lib-card {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.15s;
+}
+.lib-card:active { opacity: 0.7; }
+
+.lib-card-thumb {
+  width: 72px; height: 72px; flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--bg-card2);
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.lib-card-emoji { font-size: 32px; }
+
+.lib-card-info { flex: 1; min-width: 0; }
+.lib-card-name {
+  font-size: 15px; font-weight: 600;
+  color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lib-card-muscles {
+  font-size: 13px; color: var(--text3);
+  margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lib-card-meta {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 6px;
+}
+.lib-badge {
+  font-size: 11px; font-weight: 600;
+  background: var(--accent-subtle, rgba(0,122,255,0.12));
+  color: var(--accent);
+  padding: 2px 8px; border-radius: 10px;
+}
+.lib-card-sets {
+  font-size: 12px; color: var(--text3); font-weight: 500;
+}
+.lib-card-arrow {
+  font-size: 20px; color: var(--text3); flex-shrink: 0;
+}

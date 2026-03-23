@@ -34,6 +34,7 @@ TF.settings = {
       </div>
 
       <div class="settings-group" style="margin:0 16px 12px">
+        ${this._settingsRow('settings.dob', `<input type="date" id="settingsDOB" class="settings-select" value="${profile.dob || ''}">`)}
         ${this._settingsRow('settings.age', `<input type="number" id="settingsAge" class="settings-select" value="${profile.age || 44}">`)}
         ${this._settingsRow('settings.height', `<input type="number" id="settingsHeight" class="settings-select" value="${profile.height || 182}">`)}
         ${this._settingsRow('settings.start.weight', `<input type="number" step="0.1" id="settingsStartWeight" class="settings-select" value="${profile.startingWeight || 83}">`)}
@@ -202,6 +203,7 @@ TF.settings = {
   _saveProfile() {
     const profile = TF.data.getProfile();
     profile.name = document.getElementById('settingsName').value || 'Tim';
+    profile.dob = document.getElementById('settingsDOB').value || '';
     profile.age = parseInt(document.getElementById('settingsAge').value) || 44;
     profile.height = parseInt(document.getElementById('settingsHeight').value) || 182;
     profile.startingWeight = parseFloat(document.getElementById('settingsStartWeight').value) || 83;

@@ -210,6 +210,7 @@ const TRANSLATIONS = {
     // Settings
     'settings.profile': 'Profile',
     'settings.name': 'Name',
+    'settings.dob': 'Date of Birth',
     'settings.age': 'Age',
     'settings.height': 'Height (cm)',
     'settings.start.weight': 'Starting Weight (kg)',
@@ -488,6 +489,7 @@ const TRANSLATIONS = {
 
     'settings.profile': 'Профиль',
     'settings.name': 'Имя',
+    'settings.dob': 'Дата рождения',
     'settings.age': 'Возраст',
     'settings.height': 'Рост (см)',
     'settings.start.weight': 'Начальный вес (кг)',

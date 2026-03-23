@@ -45,6 +45,9 @@ TF.app = {
   },
 
   _onUnlock() {
+    // Check for health data in URL params (from Shortcuts widget)
+    this._importHealthFromURL();
+
     // Check for crash-recovered session
     const active = TF.data.getActiveSession();
     if (active && !active.completed) {
@@ -57,6 +60,35 @@ TF.app = {
     // Render initial view
     this.renderDashboard();
     TF.router.navigate('dashboard');
+  },
+
+  _importHealthFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const steps = params.get('steps');
+    const distance = params.get('distance');
+    const calories = params.get('calories');
+    const date = params.get('date');
+    if (!steps && !distance && !calories) return;
+
+    const log = {
+      date: date || TF.utils.todayStr(),
+      source: 'shortcut',
+      steps: parseInt(steps) || 0,
+      distanceKm: parseFloat(distance) || 0,
+      calories: parseFloat(calories) || 0
+    };
+    TF.data.saveCardioLog(log);
+    TF.data.saveHealthData({ ...log });
+
+    // Clean URL without reloading
+    const clean = window.location.pathname;
+    window.history.replaceState({}, '', clean);
+
+    const lang = TF.i18n.getLang();
+    this.showToast(lang === 'ru'
+      ? `Здоровье: ${log.steps} шаг · ${log.distanceKm} км · ${log.calories} ккал`
+      : `Health synced: ${log.steps} steps · ${log.distanceKm} km · ${log.calories} kcal`
+    );
   },
 
   // --- Dashboard ---

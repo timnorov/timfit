@@ -135,6 +135,10 @@ TF.settings = {
         ${this._settingsRow('settings.program.start', `<span class="settings-row-value">${programStart}</span>`)}
         ${this._settingsRow('settings.days.training', `<span class="settings-row-value">${daysTraining}</span>`)}
       </div>
+      <button class="btn btn-primary" style="margin:0 16px 12px;width:calc(100% - 32px)"
+              onclick="TF.settings.checkForUpdates()">
+        ${lang === 'ru' ? 'Проверить обновления' : 'Check for Updates'}
+      </button>
       <div class="spacer"></div>
     `;
 
@@ -323,5 +327,27 @@ TF.settings = {
   applyThemeFromProfile() {
     const profile = TF.data.getProfile();
     this._applyTheme(profile.theme || 'system');
+  },
+
+  async checkForUpdates() {
+    const lang = TF.i18n.getLang();
+    const btn = event.target;
+    btn.textContent = lang === 'ru' ? 'Проверяем...' : 'Checking...';
+    btn.disabled = true;
+    try {
+      if ('serviceWorker' in navigator) {
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (reg) await reg.update();
+      }
+      // Clear all caches so fresh files load
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+      btn.textContent = lang === 'ru' ? 'Обновляем...' : 'Reloading...';
+      setTimeout(() => location.reload(), 500);
+    } catch(e) {
+      btn.textContent = lang === 'ru' ? 'Проверить обновления' : 'Check for Updates';
+      btn.disabled = false;
+      TF.app.showToast('Update check failed');
+    }
   }
 };

@@ -43,7 +43,7 @@ TF.PROGRAM = {
       {
         id: 'incline_barbell_press',
         name: 'Incline Barbell Press (30°)',
-        gif: 'assets/gifs/incline_barbell_press.gif',
+        gif: 'assets/gifs/incline_barbell_press.png',
         muscles: ['Upper Pectorals', 'Front Delts', 'Triceps'],
         muscleKeys: ['muscle.upper.chest', 'muscle.front.delts', 'muscle.triceps'],
         sets: 4, repsMin: 4, repsMax: 6, rest: 180, rpe: '8–9',
@@ -56,7 +56,7 @@ TF.PROGRAM = {
       {
         id: 'flat_bench_press',
         name: 'Barbell Flat Bench Press',
-        gif: 'assets/gifs/flat_bench_press.gif',
+        gif: 'assets/gifs/flat_bench_press.png',
         muscles: ['Pectorals (Sternal)', 'Front Delts', 'Triceps'],
         muscleKeys: ['muscle.chest', 'muscle.front.delts', 'muscle.triceps'],
         sets: 4, repsMin: 6, repsMax: 8, rest: 150, rpe: '8',
@@ -69,7 +69,7 @@ TF.PROGRAM = {
       {
         id: 'seated_db_overhead_press',
         name: 'Seated Dumbbell Overhead Press',
-        gif: 'assets/gifs/seated_db_overhead_press.gif',
+        gif: 'assets/gifs/seated_db_overhead_press.png',
         muscles: ['Side Delts', 'Front Delts', 'Triceps', 'Upper Traps'],
         muscleKeys: ['muscle.side.delts', 'muscle.front.delts', 'muscle.triceps', 'muscle.traps'],
         sets: 4, repsMin: 8, repsMax: 10, rest: 120, rpe: '8',
@@ -82,7 +82,7 @@ TF.PROGRAM = {
       {
         id: 'cable_lateral_raise',
         name: 'Cable Lateral Raise — Single Arm',
-        gif: 'assets/gifs/cable_lateral_raise.gif',
+        gif: 'assets/gifs/cable_lateral_raise.png',
         muscles: ['Medial Deltoid'],
         muscleKeys: ['muscle.side.delts'],
         sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '7',
@@ -98,7 +98,7 @@ TF.PROGRAM = {
       {
         id: 'tricep_bar_pushdown',
         name: 'Revolving Short Bar Pushdown',
-        gif: 'assets/gifs/tricep_bar_pushdown.gif',
+        gif: 'assets/gifs/tricep_bar_pushdown.png',
         muscles: ['Triceps Lateral Head', 'Medial Head'],
         muscleKeys: ['muscle.triceps'],
         sets: 3, repsMin: 12, repsMax: 15, rest: 60, rpe: '7',
@@ -113,7 +113,7 @@ TF.PROGRAM = {
       {
         id: 'overhead_tricep_extension',
         name: 'Revolving Short Bar Overhead Extension',
-        gif: 'assets/gifs/overhead_tricep_extension.gif',
+        gif: 'assets/gifs/overhead_tricep_extension.png',
         muscles: ['Triceps Long Head'],
         muscleKeys: ['muscle.triceps'],
         sets: 3, repsMin: 10, repsMax: 15, rest: 60, rpe: '7',
@@ -129,7 +129,7 @@ TF.PROGRAM = {
       {
         id: 'cable_face_pull',
         name: 'Cable Face Pull',
-        gif: 'assets/gifs/cable_face_pull.gif',
+        gif: 'assets/gifs/cable_face_pull.png',
         muscles: ['Rear Delts', 'Rotator Cuff', 'Upper Traps'],
         muscleKeys: ['muscle.rear.delts', 'muscle.traps'],
         sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '6–7',
@@ -154,7 +154,7 @@ TF.PROGRAM = {
       {
         id: 'weighted_pullup',
         name: 'Weighted Pull-Up',
-        gif: 'assets/gifs/weighted_pullup.gif',
+        gif: 'assets/gifs/weighted_pullup.png',
         muscles: ['Lats', 'Biceps', 'Lower Traps', 'Core'],
         muscleKeys: ['muscle.lats', 'muscle.biceps', 'muscle.traps', 'muscle.core'],
         sets: 4, repsMin: 6, repsMax: 8, rest: 180, rpe: '8–9',
@@ -167,7 +167,7 @@ TF.PROGRAM = {
       {
         id: 'barbell_bent_over_row',
         name: 'Barbell Bent-Over Row (Overhand)',
-        gif: 'assets/gifs/barbell_bent_over_row.gif',
+        gif: 'assets/gifs/barbell_bent_over_row.png',
         muscles: ['Mid Traps', 'Rhomboids', 'Rear Delts', 'Lats'],
         muscleKeys: ['muscle.traps', 'muscle.back', 'muscle.rear.delts', 'muscle.lats'],
         sets: 4, repsMin: 6, repsMax: 8, rest: 180, rpe: '8',
@@ -180,7 +180,7 @@ TF.PROGRAM = {
       {
         id: 'seated_cable_row_neutral',
         name: 'Seated Cable Row — Neutral Grip (V-Bar)',
-        gif: 'assets/gifs/seated_cable_row_neutral.gif',
+        gif: 'assets/gifs/seated_cable_row_neutral.png',
         muscles: ['Lats', 'Mid Traps', 'Biceps'],
         muscleKeys: ['muscle.lats', 'muscle.traps', 'muscle.biceps'],
         sets: 3, repsMin: 8, repsMax: 10, rest: 90, rpe: '8',
@@ -195,7 +195,7 @@ TF.PROGRAM = {
       {
         id: 'cable_face_pull_pull_a',
         name: 'Cable Face Pull',
-        gif: 'assets/gifs/cable_face_pull.gif',
+        gif: 'assets/gifs/cable_face_pull.png',
         muscles: ['Rear Delts', 'Rotator Cuff', 'Upper Traps'],
         muscleKeys: ['muscle.rear.delts', 'muscle.traps'],
         sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '6–7',
@@ -210,7 +210,7 @@ TF.PROGRAM = {
       {
         id: 'ez_bar_curl',
         name: 'EZ-Bar Curl (Standing)',
-        gif: 'assets/gifs/ez_bar_curl.gif',
+        gif: 'assets/gifs/ez_bar_curl.png',
         muscles: ['Biceps Brachii', 'Brachialis'],
         muscleKeys: ['muscle.biceps'],
         sets: 3, repsMin: 8, repsMax: 10, rest: 90, rpe: '8',
@@ -223,7 +223,7 @@ TF.PROGRAM = {
       {
         id: 'hammer_curl',
         name: 'Hammer Curl — Dumbbell, Alternating',
-        gif: 'assets/gifs/hammer_curl.gif',
+        gif: 'assets/gifs/hammer_curl.png',
         muscles: ['Brachialis', 'Brachioradialis', 'Bicep Long Head'],
         muscleKeys: ['muscle.biceps'],
         sets: 3, repsMin: 10, repsMax: 12, rest: 60, rpe: '7',
@@ -247,7 +247,7 @@ TF.PROGRAM = {
       {
         id: 'barbell_back_squat',
         name: 'Barbell Back Squat',
-        gif: 'assets/gifs/barbell_back_squat.gif',
+        gif: 'assets/gifs/barbell_back_squat.png',
         muscles: ['Quads', 'Glutes', 'Hamstrings', 'Core', 'Spinal Erectors'],
         muscleKeys: ['muscle.quads', 'muscle.glutes', 'muscle.hamstrings', 'muscle.core'],
         sets: 4, repsMin: 4, repsMax: 6, rest: 180, rpe: '8–9',
@@ -261,7 +261,7 @@ TF.PROGRAM = {
       {
         id: 'barbell_hip_thrust',
         name: 'Barbell Hip Thrust',
-        gif: 'assets/gifs/barbell_hip_thrust.gif',
+        gif: 'assets/gifs/barbell_hip_thrust.png',
         muscles: ['Glutes (Maximus + Medius)', 'Hamstrings'],
         muscleKeys: ['muscle.glutes', 'muscle.hamstrings'],
         sets: 4, repsMin: 8, repsMax: 12, rest: 120, rpe: '8',
@@ -274,7 +274,7 @@ TF.PROGRAM = {
       {
         id: 'leg_press',
         name: 'Leg Press (45°)',
-        gif: 'assets/gifs/leg_press.gif',
+        gif: 'assets/gifs/leg_press.png',
         muscles: ['Quads', 'Glutes', 'Hamstrings'],
         muscleKeys: ['muscle.quads', 'muscle.glutes', 'muscle.hamstrings'],
         sets: 3, repsMin: 10, repsMax: 12, rest: 120, rpe: '8',
@@ -287,7 +287,7 @@ TF.PROGRAM = {
       {
         id: 'lying_leg_curl',
         name: 'Lying Leg Curl (Machine)',
-        gif: 'assets/gifs/lying_leg_curl.gif',
+        gif: 'assets/gifs/lying_leg_curl.png',
         muscles: ['Biceps Femoris', 'Semitendinosus'],
         muscleKeys: ['muscle.hamstrings'],
         sets: 3, repsMin: 10, repsMax: 12, rest: 90, rpe: '7–8',
@@ -299,7 +299,7 @@ TF.PROGRAM = {
       {
         id: 'standing_calf_raise',
         name: 'Standing Calf Raise',
-        gif: 'assets/gifs/standing_calf_raise.gif',
+        gif: 'assets/gifs/standing_calf_raise.png',
         muscles: ['Gastrocnemius'],
         muscleKeys: ['muscle.calves'],
         sets: 4, repsMin: 12, repsMax: 15, rest: 60, rpe: '7–8',
@@ -312,7 +312,7 @@ TF.PROGRAM = {
       {
         id: 'cable_crunch',
         name: 'Cable Crunch (Kneeling)',
-        gif: 'assets/gifs/cable_crunch.gif',
+        gif: 'assets/gifs/cable_crunch.png',
         muscles: ['Rectus Abdominis', 'Obliques'],
         muscleKeys: ['muscle.core'],
         sets: 3, repsMin: 12, repsMax: 15, rest: 60, rpe: '7',
@@ -337,7 +337,7 @@ TF.PROGRAM = {
       {
         id: 'incline_db_press',
         name: 'Incline Dumbbell Press (30°)',
-        gif: 'assets/gifs/incline_db_press.gif',
+        gif: 'assets/gifs/incline_db_press.png',
         muscles: ['Upper Pectorals', 'Front Delts', 'Triceps'],
         muscleKeys: ['muscle.upper.chest', 'muscle.front.delts', 'muscle.triceps'],
         sets: 4, repsMin: 8, repsMax: 12, rest: 120, rpe: '8',
@@ -350,7 +350,7 @@ TF.PROGRAM = {
       {
         id: 'cable_chest_fly',
         name: 'Cable Chest Fly (Low Pulley Crossover)',
-        gif: 'assets/gifs/cable_chest_fly.gif',
+        gif: 'assets/gifs/cable_chest_fly.png',
         muscles: ['Pectorals (Sternal + Clavicular)', 'Front Delts'],
         muscleKeys: ['muscle.chest', 'muscle.upper.chest', 'muscle.front.delts'],
         sets: 3, repsMin: 12, repsMax: 15, rest: 90, rpe: '7–8',
@@ -365,7 +365,7 @@ TF.PROGRAM = {
       {
         id: 'arnold_press',
         name: 'Arnold Press (Dumbbell, Seated)',
-        gif: 'assets/gifs/arnold_press.gif',
+        gif: 'assets/gifs/arnold_press.png',
         muscles: ['All Three Delt Heads', 'Triceps', 'Rotator Cuff'],
         muscleKeys: ['muscle.shoulders', 'muscle.front.delts', 'muscle.side.delts', 'muscle.triceps'],
         sets: 3, repsMin: 10, repsMax: 12, rest: 90, rpe: '7–8',
@@ -378,7 +378,7 @@ TF.PROGRAM = {
       {
         id: 'cable_lateral_raise_leaning',
         name: 'Cable Lateral Raise — Leaning',
-        gif: 'assets/gifs/cable_lateral_raise_leaning.gif',
+        gif: 'assets/gifs/cable_lateral_raise_leaning.png',
         muscles: ['Medial Deltoid'],
         muscleKeys: ['muscle.side.delts'],
         sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '7',
@@ -392,7 +392,7 @@ TF.PROGRAM = {
       {
         id: 'weighted_dips_chest',
         name: 'Weighted Dips (Chest-Focused)',
-        gif: 'assets/gifs/weighted_dips_chest.gif',
+        gif: 'assets/gifs/weighted_dips_chest.png',
         muscles: ['Lower/Outer Pectorals', 'Triceps', 'Front Delts'],
         muscleKeys: ['muscle.chest', 'muscle.triceps', 'muscle.front.delts'],
         sets: 3, repsMin: 8, repsMax: 12, rest: 90, rpe: '8',
@@ -405,7 +405,7 @@ TF.PROGRAM = {
       {
         id: 'skull_crusher',
         name: 'Skull Crusher (EZ-Bar, Lying)',
-        gif: 'assets/gifs/skull_crusher.gif',
+        gif: 'assets/gifs/skull_crusher.png',
         muscles: ['Triceps Long Head', 'Lateral Head'],
         muscleKeys: ['muscle.triceps'],
         sets: 3, repsMin: 10, repsMax: 12, rest: 60, rpe: '7',
@@ -418,7 +418,7 @@ TF.PROGRAM = {
       {
         id: 'cable_face_pull_push_b',
         name: 'Cable Face Pull',
-        gif: 'assets/gifs/cable_face_pull.gif',
+        gif: 'assets/gifs/cable_face_pull.png',
         muscles: ['Rear Delts', 'Rotator Cuff', 'Upper Traps'],
         muscleKeys: ['muscle.rear.delts', 'muscle.traps'],
         sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '6–7',
@@ -443,7 +443,7 @@ TF.PROGRAM = {
       {
         id: 'weighted_pullup_b',
         name: 'Weighted Pull-Up',
-        gif: 'assets/gifs/weighted_pullup.gif',
+        gif: 'assets/gifs/weighted_pullup.png',
         muscles: ['Lats', 'Biceps', 'Lower Traps', 'Core'],
         muscleKeys: ['muscle.lats', 'muscle.biceps', 'muscle.traps', 'muscle.core'],
         sets: 4, repsMin: 8, repsMax: 10, rest: 120, rpe: '8',
@@ -456,7 +456,7 @@ TF.PROGRAM = {
       {
         id: 'chest_supported_db_row',
         name: 'Chest-Supported Incline Dumbbell Row',
-        gif: 'assets/gifs/chest_supported_db_row.gif',
+        gif: 'assets/gifs/chest_supported_db_row.png',
         muscles: ['Mid Traps', 'Rhomboids', 'Rear Delts', 'Lower Lats'],
         muscleKeys: ['muscle.traps', 'muscle.back', 'muscle.rear.delts', 'muscle.lats'],
         sets: 4, repsMin: 10, repsMax: 12, rest: 90, rpe: '8',
@@ -469,7 +469,7 @@ TF.PROGRAM = {
       {
         id: 'seated_cable_row_wide',
         name: 'Seated Cable Row — Wide Overhand',
-        gif: 'assets/gifs/seated_cable_row_wide.gif',
+        gif: 'assets/gifs/seated_cable_row_wide.png',
         muscles: ['Upper Traps', 'Rhomboids', 'Rear Delts'],
         muscleKeys: ['muscle.traps', 'muscle.back', 'muscle.rear.delts'],
         sets: 3, repsMin: 12, repsMax: 15, rest: 90, rpe: '7–8',
@@ -484,7 +484,7 @@ TF.PROGRAM = {
       {
         id: 'cable_rear_delt_fly',
         name: 'Cable Rear Delt Fly (Bent-Over, Crossed)',
-        gif: 'assets/gifs/cable_rear_delt_fly.gif',
+        gif: 'assets/gifs/cable_rear_delt_fly.png',
         muscles: ['Rear Deltoid', 'Infraspinatus', 'Teres Minor'],
         muscleKeys: ['muscle.rear.delts', 'muscle.back'],
         sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '7',
@@ -499,7 +499,7 @@ TF.PROGRAM = {
       {
         id: 'incline_db_curl',
         name: 'Incline Dumbbell Curl',
-        gif: 'assets/gifs/incline_db_curl.gif',
+        gif: 'assets/gifs/incline_db_curl.png',
         muscles: ['Biceps Long Head (Peak)', 'Brachialis'],
         muscleKeys: ['muscle.biceps'],
         sets: 3, repsMin: 10, repsMax: 12, rest: 90, rpe: '7–8',
@@ -512,7 +512,7 @@ TF.PROGRAM = {
       {
         id: 'cable_curl_single_arm',
         name: 'Cable Curl — Single Arm, Low Pulley',
-        gif: 'assets/gifs/cable_curl_single_arm.gif',
+        gif: 'assets/gifs/cable_curl_single_arm.png',
         muscles: ['Biceps', 'Brachialis'],
         muscleKeys: ['muscle.biceps'],
         sets: 3, repsMin: 12, repsMax: 15, rest: 60, rpe: '7',
@@ -537,7 +537,7 @@ TF.PROGRAM = {
       {
         id: 'bulgarian_split_squat',
         name: 'Bulgarian Split Squat (Dumbbell)',
-        gif: 'assets/gifs/bulgarian_split_squat.gif',
+        gif: 'assets/gifs/bulgarian_split_squat.png',
         muscles: ['Quads', 'Glutes', 'Hamstrings', 'Balance'],
         muscleKeys: ['muscle.quads', 'muscle.glutes', 'muscle.hamstrings'],
         sets: 3, repsMin: 10, repsMax: 12, rest: 120, rpe: '8',
@@ -551,7 +551,7 @@ TF.PROGRAM = {
       {
         id: 'hack_squat',
         name: 'Hack Squat (Machine)',
-        gif: 'assets/gifs/hack_squat.gif',
+        gif: 'assets/gifs/hack_squat.png',
         muscles: ['Quads (VMO)', 'Glutes'],
         muscleKeys: ['muscle.quads', 'muscle.glutes'],
         sets: 4, repsMin: 10, repsMax: 12, rest: 120, rpe: '8',
@@ -564,7 +564,7 @@ TF.PROGRAM = {
       {
         id: 'db_hip_thrust',
         name: 'Hip Thrust (Dumbbell or Machine)',
-        gif: 'assets/gifs/db_hip_thrust.gif',
+        gif: 'assets/gifs/db_hip_thrust.png',
         muscles: ['Glutes (Maximus)', 'Hamstrings'],
         muscleKeys: ['muscle.glutes', 'muscle.hamstrings'],
         sets: 3, repsMin: 15, repsMax: 20, rest: 90, rpe: '7–8',
@@ -576,7 +576,7 @@ TF.PROGRAM = {
       {
         id: 'back_extension',
         name: 'Back Extension / Hyperextension',
-        gif: 'assets/gifs/back_extension.gif',
+        gif: 'assets/gifs/back_extension.png',
         muscles: ['Hamstrings', 'Glutes', 'Spinal Erectors'],
         muscleKeys: ['muscle.hamstrings', 'muscle.glutes'],
         sets: 3, repsMin: 12, repsMax: 15, rest: 90, rpe: '7',
@@ -588,7 +588,7 @@ TF.PROGRAM = {
       {
         id: 'leg_extension',
         name: 'Leg Extension (Machine)',
-        gif: 'assets/gifs/leg_extension.gif',
+        gif: 'assets/gifs/leg_extension.png',
         muscles: ['Rectus Femoris', 'All Quad Heads'],
         muscleKeys: ['muscle.quads'],
         sets: 3, repsMin: 12, repsMax: 15, rest: 60, rpe: '7',
@@ -600,7 +600,7 @@ TF.PROGRAM = {
       {
         id: 'seated_calf_raise',
         name: 'Seated Calf Raise (Machine)',
-        gif: 'assets/gifs/seated_calf_raise.gif',
+        gif: 'assets/gifs/seated_calf_raise.png',
         muscles: ['Soleus (Deep Calf)'],
         muscleKeys: ['muscle.calves'],
         sets: 4, repsMin: 15, repsMax: 20, rest: 60, rpe: '7–8',
@@ -612,7 +612,7 @@ TF.PROGRAM = {
       {
         id: 'ab_wheel_rollout',
         name: 'Ab Wheel Rollout',
-        gif: 'assets/gifs/ab_wheel_rollout.gif',
+        gif: 'assets/gifs/ab_wheel_rollout.png',
         muscles: ['Rectus Abdominis', 'Obliques', 'Hip Flexors', 'Lats'],
         muscleKeys: ['muscle.core', 'muscle.lats'],
         sets: 3, repsMin: 8, repsMax: 12, rest: 60, rpe: '8',

@@ -90,29 +90,57 @@ TF.cardio = {
     `;
   },
 
-  async pasteHealth() {
-    try {
-      const text = await navigator.clipboard.readText();
-      const data = JSON.parse(text);
-      if (data.steps || data.distance || data.calories) {
-        const log = {
-          date: data.date || TF.utils.todayStr(),
-          source: 'shortcut',
-          steps: parseInt(data.steps) || 0,
-          distanceKm: parseFloat(data.distance) || 0,
-          calories: parseFloat(data.calories) || 0
-        };
-        TF.data.saveCardioLog(log);
-        TF.data.saveHealthData({ ...log, date: log.date });
-        TF.app.showToast(TF.i18n.t('cardio.pasted'));
-        this.render(document.querySelector('#tab-progress .cardio-section'));
-        TF.app.renderDashboard();
-      } else {
-        TF.app.showToast('Invalid health data format');
+  pasteHealth() {
+    const lang = TF.i18n.getLang();
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:900;display:flex;align-items:flex-end';
+    overlay.innerHTML = `
+      <div style="background:var(--bg);width:100%;border-radius:20px 20px 0 0;padding:20px 20px calc(var(--safe-bottom) + 20px)">
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px">${lang === 'ru' ? 'Вставить данные здоровья' : 'Paste Health Data'}</div>
+        <div style="font-size:13px;color:var(--text3);margin-bottom:12px">${lang === 'ru' ? 'Запустите Shortcut, затем вставьте сюда:' : 'Run your Shortcut, then long-press below and tap Paste:'}</div>
+        <textarea id="healthPasteArea"
+          style="width:100%;height:100px;background:var(--bg-card2);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:14px;color:var(--text);font-family:monospace;resize:none"
+          placeholder='{"steps":8000,"distance":6.2,"calories":450,"date":"2026-03-23"}'></textarea>
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button onclick="this.closest('div[style*=fixed]').remove()"
+            style="flex:1;padding:14px;border-radius:12px;background:var(--bg-card2);font-size:16px;font-weight:600">
+            ${lang === 'ru' ? 'Отмена' : 'Cancel'}
+          </button>
+          <button id="healthPasteBtn"
+            style="flex:1;padding:14px;border-radius:12px;background:var(--accent);color:white;font-size:16px;font-weight:600">
+            ${lang === 'ru' ? 'Сохранить' : 'Save'}
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    setTimeout(() => document.getElementById('healthPasteArea').focus(), 100);
+
+    document.getElementById('healthPasteBtn').onclick = () => {
+      try {
+        const text = document.getElementById('healthPasteArea').value.trim();
+        const data = JSON.parse(text);
+        if (data.steps || data.distance || data.calories) {
+          const log = {
+            date: data.date || TF.utils.todayStr(),
+            source: 'shortcut',
+            steps: parseInt(data.steps) || 0,
+            distanceKm: parseFloat(data.distance) || 0,
+            calories: parseFloat(data.calories) || 0
+          };
+          TF.data.saveCardioLog(log);
+          TF.data.saveHealthData({ ...log, date: log.date });
+          overlay.remove();
+          TF.app.showToast(TF.i18n.t('cardio.pasted'));
+          this.render(document.querySelector('#tab-progress .cardio-section'));
+          TF.app.renderDashboard();
+        } else {
+          TF.app.showToast(lang === 'ru' ? 'Неверный формат' : 'Invalid format');
+        }
+      } catch(e) {
+        TF.app.showToast(lang === 'ru' ? 'Неверный JSON' : 'Invalid JSON — check the text');
       }
-    } catch(e) {
-      TF.app.showToast('Could not read clipboard. Run the Shortcuts app first.');
-    }
+    };
   },
 
   saveManual() {

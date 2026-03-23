@@ -227,6 +227,7 @@ TF.settings = {
     TF.data.saveProfile(profile);
     TF.app.showToast(TF.i18n.t('settings.saved'));
     TF.app.renderDashboard();
+    this.render();
   },
 
   _saveRestDefaults() {

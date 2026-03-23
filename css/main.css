@@ -877,7 +877,7 @@ a { color: var(--accent); text-decoration: none; }
   box-shadow: var(--shadow);
 }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.form-field { display: flex; flex-direction: column; gap: 4px; }
+.form-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; overflow: hidden; }
 .form-label { font-size: 12px; font-weight: 600; color: var(--text3); }
 .form-input {
   background: var(--bg-input);

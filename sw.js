@@ -43,6 +43,21 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+
+  // Navigation (HTML pages): always network-first so new deployments are
+  // picked up immediately and the SW can never get stuck serving stale HTML.
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request).then(response => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+        return response;
+      }).catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // Everything else: cache-first, fall back to network.
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
@@ -52,11 +67,7 @@ self.addEventListener('fetch', e => {
           caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
         }
         return response;
-      }).catch(() => {
-        if (e.request.destination === 'document') {
-          return caches.match('./index.html');
-        }
-      });
+      }).catch(() => null);
     })
   );
 });

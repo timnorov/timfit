@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#007AFF" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0A84FF" media="(prefers-color-scheme: dark)">
+
+  <!-- PWA / iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TimFit">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+
+  <title>TimFit</title>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/main.css">
+
+  <!-- Preload critical modules -->
+  <link rel="preload" href="js/utils.js" as="script">
+  <link rel="preload" href="js/i18n.js" as="script">
+</head>
+<body>
+
+<!-- ============================================================
+     LOCK SCREEN
+     ============================================================ -->
+<div id="lockScreen">
+  <div id="lockAvatar" class="lock-avatar"></div>
+  <h1 id="lockTitle">TimFit</h1>
+  <p id="lockSubtitle">Enter PIN</p>
+
+  <div class="pin-dots" id="lockDots">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <div id="lockError" class="hidden"></div>
+
+  <div class="pin-keypad" id="lockKeypad">
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('1')"><span>1</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('2')"><span>2</span><span class="key-letters">ABC</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('3')"><span>3</span><span class="key-letters">DEF</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('4')"><span>4</span><span class="key-letters">GHI</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('5')"><span>5</span><span class="key-letters">JKL</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('6')"><span>6</span><span class="key-letters">MNO</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('7')"><span>7</span><span class="key-letters">PQRS</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('8')"><span>8</span><span class="key-letters">TUV</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('9')"><span>9</span><span class="key-letters">WXYZ</span></button>
+    <button class="pin-key key-empty"></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('0')"><span>0</span></button>
+    <button class="pin-key key-del" onclick="TF.auth.handleKeyPress('del')">⌫</button>
+  </div>
+
+  <button class="lock-forgot" onclick="TF.auth._showForgotPIN()">Forgot PIN</button>
+</div>
+
+<!-- ============================================================
+     SETUP SCREEN (First launch — create PIN)
+     ============================================================ -->
+<div id="setupScreen" class="hidden">
+  <div class="setup-logo">TF</div>
+  <h2 id="setupTitle">Welcome to TimFit</h2>
+  <p id="setupSubtitle">Set a 6-digit PIN</p>
+
+  <div class="pin-dots" id="setupDots" style="margin-bottom:20px">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <!-- Hidden buffer for setup PIN -->
+  <div id="setupPinBuffer" data-buffer="[]" style="display:none"></div>
+  <div id="setupError" class="hidden" style="color:#FF453A;font-size:14px;min-height:20px;text-align:center;margin-bottom:8px"></div>
+
+  <div class="pin-keypad">
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('1')"><span>1</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('2')"><span>2</span><span class="key-letters">ABC</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('3')"><span>3</span><span class="key-letters">DEF</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('4')"><span>4</span><span class="key-letters">GHI</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('5')"><span>5</span><span class="key-letters">JKL</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('6')"><span>6</span><span class="key-letters">MNO</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('7')"><span>7</span><span class="key-letters">PQRS</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('8')"><span>8</span><span class="key-letters">TUV</span></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('9')"><span>9</span><span class="key-letters">WXYZ</span></button>
+    <button class="pin-key key-empty"></button>
+    <button class="pin-key" onclick="TF.auth.handleKeyPress('0')"><span>0</span></button>
+    <button class="pin-key key-del" onclick="TF.auth.handleKeyPress('del')">⌫</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP
+     ============================================================ -->
+<div id="app" class="hidden">
+
+  <!-- ===== TAB CONTENT AREA ===== -->
+  <div id="tabContent">
+
+    <!-- Dashboard Tab -->
+    <section id="tab-dashboard" class="tab-pane active">
+      <!-- Dynamically rendered by app.js -->
+    </section>
+
+    <!-- Workout Tab -->
+    <section id="tab-workout" class="tab-pane">
+      <!-- Dynamically rendered by app.js -->
+    </section>
+
+    <!-- Progress Tab -->
+    <section id="tab-progress" class="tab-pane">
+      <!-- Sub-sections: body stats, workout stats, cardio, export -->
+      <div id="progressInner"></div>
+    </section>
+
+    <!-- Photos Tab -->
+    <section id="tab-photos" class="tab-pane">
+      <!-- Dynamically rendered by photos.js -->
+    </section>
+
+    <!-- Settings Tab -->
+    <section id="tab-settings" class="tab-pane">
+      <!-- Dynamically rendered by settings.js -->
+    </section>
+
+  </div><!-- /tabContent -->
+
+  <!-- ===== BOTTOM TAB BAR ===== -->
+  <nav id="tabBar">
+    <button class="tab-btn active" data-tab="dashboard">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-label" data-i18n="nav.dashboard">Dashboard</span>
+    </button>
+    <button class="tab-btn" data-tab="workout">
+      <span class="tab-icon">💪</span>
+      <span class="tab-label" data-i18n="nav.workout">Workout</span>
+    </button>
+    <button class="tab-btn" data-tab="progress">
+      <span class="tab-icon">📊</span>
+      <span class="tab-label" data-i18n="nav.progress">Progress</span>
+    </button>
+    <button class="tab-btn" data-tab="photos">
+      <span class="tab-icon">📸</span>
+      <span class="tab-label" data-i18n="nav.photos">Photos</span>
+    </button>
+    <button class="tab-btn" data-tab="settings">
+      <span class="tab-icon">⚙️</span>
+      <span class="tab-label" data-i18n="nav.settings">Settings</span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- ============================================================
+     ACTIVE WORKOUT SESSION (fullscreen modal)
+     ============================================================ -->
+<div id="activeWorkout" class="hidden">
+  <div class="workout-header">
+    <div>
+      <div id="workoutTitle" class="workout-title">Push A — Monday</div>
+      <div class="workout-timer-display">
+        <span data-i18n="session.elapsed">Elapsed</span>: <span id="workoutElapsed" style="font-variant-numeric:tabular-nums">00:00</span>
+      </div>
+    </div>
+    <button id="workoutFinishBtn" class="workout-finish-btn" onclick="TF.workout._finishSession()"
+            data-i18n="session.finish">Finish</button>
+  </div>
+  <div id="workoutBody" class="workout-body">
+    <!-- Exercise cards rendered by workout.js -->
+  </div>
+</div>
+
+<!-- ============================================================
+     REST TIMER SHEET
+     ============================================================ -->
+<div id="restTimerSheet">
+  <div class="timer-sheet-handle"></div>
+  <div class="timer-sheet-content">
+    <div id="timerExerciseName" class="timer-exercise-name">Exercise</div>
+    <div id="timerCountdown" class="timer-countdown">2:30</div>
+    <div class="timer-controls">
+      <div class="timer-adj-btn" id="timerSubtract">−15s</div>
+      <div class="timer-skip-btn" id="timerSkip" data-i18n="timer.skip">Skip</div>
+      <div class="timer-adj-btn" id="timerAdd">+15s</div>
+    </div>
+  </div>
+</div>
+
+<!-- Mini timer bar (visible when timer is running and sheet is closed) -->
+<div id="miniTimerBar">
+  <div class="mini-timer-label" data-i18n="timer.rest">Rest</div>
+  <div id="miniTimerTime" class="mini-timer-time">2:30</div>
+</div>
+
+<!-- ============================================================
+     EXERCISE GIF MODAL
+     ============================================================ -->
+<div id="exerciseModal" class="hidden">
+  <button id="exerciseModalClose" class="exercise-modal-close">✕</button>
+  <div class="exercise-modal-gif">
+    <img id="modalGif" alt="Exercise demonstration">
+  </div>
+  <div class="exercise-modal-info">
+    <div id="modalExName" class="modal-ex-name"></div>
+    <div id="modalExCues" class="modal-cues"></div>
+    <div id="modalEquipment" class="modal-equipment"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PICKER MODAL (weight / reps)
+     ============================================================ -->
+<div id="pickerModal" class="hidden">
+  <div class="picker-sheet">
+    <div class="picker-toolbar">
+      <div id="pickerCancel" class="picker-cancel">Cancel</div>
+      <div id="pickerTitle" class="picker-title">Weight</div>
+      <div id="pickerDone" class="picker-done">Done</div>
+    </div>
+    <div style="position:relative">
+      <div class="picker-scroll" id="pickerScrollList">
+        <!-- Values populated by workout.js -->
+      </div>
+      <div class="picker-overlay-top"></div>
+      <div class="picker-overlay-bottom"></div>
+      <div class="picker-selector-line"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SESSION SUMMARY MODAL
+     ============================================================ -->
+<div id="sessionSummaryModal" class="hidden">
+  <div class="summary-sheet">
+    <div class="summary-header">
+      <div class="summary-icon">🏆</div>
+      <h2 class="summary-title" data-i18n="summary.title">Workout Complete!</h2>
+      <div id="summaryMotivation" class="summary-motivation"></div>
+    </div>
+    <div class="summary-stats">
+      <div class="summary-stat">
+        <div id="summaryDuration" class="summary-stat-value">—</div>
+        <div class="summary-stat-label" data-i18n="summary.duration">Duration</div>
+      </div>
+      <div class="summary-stat">
+        <div id="summaryVolume" class="summary-stat-value">—</div>
+        <div class="summary-stat-label" data-i18n="summary.volume">Total Volume</div>
+      </div>
+      <div class="summary-stat">
+        <div id="summaryExCount" class="summary-stat-value">—</div>
+        <div class="summary-stat-label" data-i18n="summary.exercises">Exercises</div>
+      </div>
+      <div class="summary-stat">
+        <div id="summaryPRCount" class="summary-stat-value">—</div>
+        <div class="summary-stat-label" data-i18n="summary.prs">PRs</div>
+      </div>
+    </div>
+    <div id="summaryPRsSection" class="summary-prs">
+      <div class="summary-prs-title">🏆 Personal Records</div>
+      <div id="summaryPRList"></div>
+    </div>
+    <button id="summaryDoneBtn" class="btn btn-primary btn-full" data-i18n="summary.done">Done</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     SESSION DETAIL MODAL (day preview)
+     ============================================================ -->
+<div id="sessionDetailModal" class="hidden"></div>
+
+<!-- ============================================================
+     INSTALL PROMPT
+     ============================================================ -->
+<div id="installPrompt" class="hidden">
+  <div class="install-icon">📱</div>
+  <div class="install-content">
+    <div class="install-title" data-i18n="install.title">Install TimFit</div>
+    <div class="install-desc" data-i18n="install.desc">Open in Safari → tap Share → "Add to Home Screen"</div>
+    <button class="install-dismiss" onclick="TF.app.dismissInstall()" data-i18n="install.dismiss">Got it</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     TOAST CONTAINER
+     ============================================================ -->
+<div id="toastContainer"></div>
+
+<!-- ============================================================
+     CONFETTI CANVAS
+     ============================================================ -->
+<canvas id="confettiCanvas" style="display:none"></canvas>
+
+<!-- ============================================================
+     SCRIPTS (order matters — dependencies first)
+     ============================================================ -->
+<script src="js/utils.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/program.js"></script>
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/router.js"></script>
+<script src="js/workout.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/photos.js"></script>
+<script src="js/cardio.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/app.js"></script>
+
+<!-- Patch auth forgot PIN -->
+<script>
+TF.auth._showForgotPIN = function() {
+  if (confirm(TF.i18n.t('lock.reset.confirm'))) {
+    TF.data.resetAll();
+    location.reload();
+  }
+};
+
+// Patch progress tab to include cardio section
+const _origProgressRender = TF.progress.render.bind(TF.progress);
+TF.progress.render = function() {
+  _origProgressRender();
+  // Add cardio section after workout stats
+  const container = document.getElementById('tab-progress');
+  const cardioSection = document.createElement('div');
+  cardioSection.className = 'cardio-section';
+  container.appendChild(cardioSection);
+  TF.cardio.render(cardioSection);
+};
+</script>
+
+</body>
+</html>

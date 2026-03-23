@@ -10,8 +10,13 @@ TF.settings = {
     const daysTraining = Math.floor((Date.now() - startDate.getTime()) / 864e5);
 
     container.innerHTML = `
-      <div class="section-header" style="padding-top:16px">
-        <h2 class="section-title">${TF.i18n.t('settings.profile')}</h2>
+      <div style="display:flex;align-items:center;padding:12px 16px 4px;gap:8px">
+        <button onclick="TF.router.navigate('dashboard')"
+                style="color:var(--accent);font-size:17px;font-weight:500;display:flex;align-items:center;gap:2px;padding:4px 0">
+          ‹ Back
+        </button>
+        <h2 class="section-title" style="flex:1;text-align:center;font-size:17px">${TF.i18n.t('settings.profile')}</h2>
+        <div style="width:60px"></div>
       </div>
 
       <!-- Avatar + Name -->

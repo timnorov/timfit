@@ -120,6 +120,7 @@ TF.settings = {
 
       <div class="settings-group" style="margin:0 16px 12px">
         ${this._settingsRow('settings.export', `<span class="settings-row-arrow">›</span>`, 'onclick="TF.settings._exportData()"')}
+        ${this._settingsRow('settings.export.copy', `<span class="settings-row-arrow">›</span>`, 'onclick="TF.settings._copyDataToClipboard()"')}
         ${this._settingsRow('settings.import', `<span class="settings-row-arrow">›</span>`, 'onclick="TF.settings._importData()"')}
         <div class="settings-row" onclick="TF.settings._resetData()">
           <span class="settings-row-label" style="color:var(--red)">${TF.i18n.t('settings.reset')}</span>
@@ -131,7 +132,7 @@ TF.settings = {
       </div>
 
       <div class="settings-group" style="margin:0 16px 12px">
-        ${this._settingsRow('settings.version', '<span class="settings-row-value">1.2.1 (24 Mar)</span>')}
+        ${this._settingsRow('settings.version', '<span class="settings-row-value">1.2.2 (24 Mar)</span>')}
         ${this._settingsRow('settings.program.start', `<span class="settings-row-value">${programStart}</span>`)}
         ${this._settingsRow('settings.days.training', `<span class="settings-row-value">${daysTraining}</span>`)}
       </div>
@@ -283,6 +284,15 @@ TF.settings = {
     } else {
       alert(TF.i18n.t('lock.wrong'));
     }
+  },
+
+  _copyDataToClipboard() {
+    const data = JSON.stringify(TF.data.exportAll(), null, 2);
+    navigator.clipboard.writeText(data).then(() => {
+      TF.app.showToast('Data copied to clipboard');
+    }).catch(() => {
+      TF.app.showToast('Copy failed — try Export JSON instead');
+    });
   },
 
   _exportData() {

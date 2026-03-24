@@ -418,7 +418,10 @@ TF.progress = {
     if (cardio.length > 0) {
       const steps = cardio.reduce((s, l) => s + (l.steps || 0), 0);
       const dist = cardio.reduce((s, l) => s + (l.distanceKm || 0), 0);
-      text += `\nCardio:\n  • Total steps: ${steps.toLocaleString()}\n  • Distance: ${dist.toFixed(1)} km\n  • Active days: ${cardio.length}/6\n`;
+      const cals = cardio.reduce((s, l) => s + (l.calories || 0), 0);
+      text += `\nCardio:\n  • Total steps: ${steps.toLocaleString()}\n  • Distance: ${dist.toFixed(1)} km\n`;
+      if (cals > 0) text += `  • Calories burned: ${Math.round(cals).toLocaleString()} kcal\n`;
+      text += `  • Active days: ${cardio.length}/6\n`;
     }
 
     el.textContent = text;

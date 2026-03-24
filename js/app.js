@@ -98,8 +98,9 @@ TF.app = {
       // Clear clipboard so it doesn't re-import next time
       navigator.clipboard.writeText('').catch(() => {});
 
+      const date = data.date || TF.utils.todayStr();
       const log = {
-        date: data.date || TF.utils.todayStr(),
+        date,
         source: 'shortcut',
         steps: parseInt(data.steps) || 0,
         distanceKm: parseFloat(data.distance) || 0,
@@ -107,14 +108,27 @@ TF.app = {
       };
       TF.data.saveCardioLog(log);
       TF.data.saveHealthData({ ...log });
+
+      // Auto-save weight and body fat if present
+      const weight = parseFloat(data.weight) || 0;
+      const bodyFat = parseFloat(data.bodyFat) || 0;
+      if (weight > 0 || bodyFat > 0) {
+        const m = { date };
+        if (weight > 0) m.weight = weight;
+        if (bodyFat > 0) m.bodyFat = bodyFat;
+        TF.data.saveMeasurement(m);
+      }
+
       this.renderDashboard();
 
       const lang = TF.i18n.getLang();
+      const parts = [`${log.steps} ${lang === 'ru' ? 'шаг' : 'steps'}`];
+      if (log.distanceKm > 0) parts.push(`${log.distanceKm.toFixed(1)} km`);
+      if (log.calories > 0) parts.push(`${Math.round(log.calories)} kcal`);
+      if (weight > 0) parts.push(`${weight.toFixed(1)} kg`);
+      if (bodyFat > 0) parts.push(`${bodyFat.toFixed(1)}% BF`);
       setTimeout(() => {
-        this.showToast(lang === 'ru'
-          ? `Здоровье: ${log.steps} шаг · ${log.distanceKm.toFixed(1)} км · ${Math.round(log.calories)} ккал`
-          : `Health synced: ${log.steps} steps · ${log.distanceKm.toFixed(1)} km · ${Math.round(log.calories)} kcal`
-        );
+        this.showToast(`${lang === 'ru' ? 'Здоровье: ' : 'Health synced: '}${parts.join(' · ')}`);
       }, 400);
     } catch(e) {
       // Clipboard not accessible or no permission — silent fail

@@ -81,10 +81,13 @@ TF.app = {
     TF.router.navigate('dashboard');
   },
 
-  async _checkClipboardHealth() {
+  async _checkClipboardHealth(manual = false) {
     try {
       const text = await navigator.clipboard.readText();
-      if (!text || !text.includes('"steps"')) return;
+      if (!text || !text.includes('"steps"')) {
+        if (manual) this.showToast('No health data in clipboard');
+        return;
+      }
       // Fix invalid JSON from Shortcuts when a health value is empty (e.g. "calories": ,)
       const sanitized = text.replace(/:\s*,/g, ': 0,').replace(/:\s*}/g, ': 0}');
       const data = JSON.parse(sanitized);
@@ -179,10 +182,11 @@ TF.app = {
            onclick="TF.router.navigate('settings')">
         ${profile.avatar ? '' : (profile.name || 'T').charAt(0).toUpperCase()}
       </div>
-      <div>
+      <div style="flex:1">
         <div class="dash-greeting">${TF.i18n.t(TF.utils.greetingKey())}, ${profile.name || 'Tim'}</div>
         <div class="dash-date">${TF.utils.formatDate(null, profile.language)}</div>
       </div>
+      <button onclick="TF.app._checkClipboardHealth(true)" style="background:var(--bg-card2);border:none;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer">↓ Health</button>
     `;
     container.appendChild(profileRow);
 

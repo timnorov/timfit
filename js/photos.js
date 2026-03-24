@@ -193,7 +193,7 @@ TF.photos = {
         <div style="margin-bottom:12px">
           <label style="display:block;padding:14px;background:var(--accent);color:white;border-radius:var(--radius-sm);text-align:center;font-weight:600;cursor:pointer">
             📷 ${TF.i18n.t('photos.camera')} / ${TF.i18n.t('photos.library')}
-            <input type="file" accept="image/*" id="photoFileInput" style="display:none">
+            <input type="file" accept="image/*" id="photoFileInput" style="display:none" multiple>
           </label>
         </div>
         <div id="photoPreview" style="display:none;margin-bottom:12px;border-radius:var(--radius-sm);overflow:hidden;max-height:200px">
@@ -233,12 +233,31 @@ TF.photos = {
     document.body.appendChild(modal);
 
     document.getElementById('photoFileInput').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const compressed = await TF.utils.compressImage(file, 800, 0.75);
-      modal._imageData = compressed;
-      document.getElementById('photoPreviewImg').src = compressed;
-      document.getElementById('photoPreview').style.display = 'block';
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+      if (files.length === 1) {
+        const compressed = await TF.utils.compressImage(files[0], 800, 0.75);
+        modal._imageData = compressed;
+        document.getElementById('photoPreviewImg').src = compressed;
+        document.getElementById('photoPreview').style.display = 'block';
+      } else {
+        // Bulk import: save all photos directly with today's date
+        for (const file of files) {
+          const compressed = await TF.utils.compressImage(file, 800, 0.75);
+          TF.data.savePhoto({
+            id: TF.utils.generateId(),
+            date: TF.utils.todayStr(),
+            angle: 'front',
+            imageData: compressed,
+            notes: '',
+            weightAtTime: null,
+            bodyFatAtTime: null
+          });
+        }
+        document.getElementById('addPhotoModal').classList.add('hidden');
+        TF.app.showToast(`${files.length} photos saved`);
+        this.render(document.getElementById('tab-progress'));
+      }
     });
   },
 

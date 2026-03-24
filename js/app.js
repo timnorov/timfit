@@ -85,7 +85,9 @@ TF.app = {
     try {
       const text = await navigator.clipboard.readText();
       if (!text || !text.includes('"steps"')) return;
-      const data = JSON.parse(text);
+      // Fix invalid JSON from Shortcuts when a health value is empty (e.g. "calories": ,)
+      const sanitized = text.replace(/:\s*,/g, ': 0,').replace(/:\s*}/g, ': 0}');
+      const data = JSON.parse(sanitized);
       if (!data.steps && !data.distance && !data.calories) return;
 
       // Avoid importing the same data twice

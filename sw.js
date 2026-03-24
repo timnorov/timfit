@@ -1,4 +1,4 @@
-const CACHE_NAME = 'timfit-v13';
+const CACHE_NAME = 'timfit-v14';
 const ASSETS = [
   './index.html',
   './manifest.json',

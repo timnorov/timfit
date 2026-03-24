@@ -274,15 +274,6 @@ TF.workout = {
     card.appendChild(cuesToggle);
     card.appendChild(cuesBody);
 
-    // Copy to all sets button
-    if (ex.sets > 1) {
-      const copyBtn = document.createElement('div');
-      copyBtn.className = 'copy-all-btn';
-      copyBtn.innerHTML = `<span>⊞</span> ${TF.i18n.t('ex.copy.all')}`;
-      copyBtn.addEventListener('click', () => this._copySetToAll(exIdx));
-      card.appendChild(copyBtn);
-    }
-
     // Sets
     const setsContainer = document.createElement('div');
     setsContainer.className = 'sets-container';
@@ -436,13 +427,13 @@ TF.workout = {
       `<div class="picker-item" data-idx="${i}">${v}</div>`
     ).join('');
 
-    // Scroll to current value
+    // Scroll to current value after DOM paint
     const currentIdx = values.findIndex(v => v === current);
     const itemH = 44;
-    scroll.scrollTop = currentIdx * itemH;
-
-    // Highlight current
-    this._updatePickerHighlight();
+    requestAnimationFrame(() => {
+      scroll.scrollTop = currentIdx * itemH;
+      this._updatePickerHighlight();
+    });
 
     // Track scroll
     scroll.onscroll = TF.utils.debounce(() => this._updatePickerHighlight(), 50);
@@ -477,6 +468,23 @@ TF.workout = {
       set.reps = value;
       const el = document.getElementById(`reps-${exIdx}-${setIdx}`);
       if (el) el.textContent = value;
+    }
+
+    // Auto-fill remaining uncompleted sets when first set is edited
+    if (setIdx === 0) {
+      const log = this._session.exerciseLogs[exIdx];
+      log.sets.forEach((s, i) => {
+        if (i === 0 || s.completed) return;
+        if (type === 'weight') {
+          s.weight = value;
+          const el = document.getElementById(`weight-${exIdx}-${i}`);
+          if (el) el.textContent = value;
+        } else {
+          s.reps = value;
+          const el = document.getElementById(`reps-${exIdx}-${i}`);
+          if (el) el.textContent = value;
+        }
+      });
     }
 
     TF.data.saveActiveSession(this._session);

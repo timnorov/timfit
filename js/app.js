@@ -61,6 +61,12 @@ TF.app = {
     // Check for health data in URL params (from Shortcuts widget)
     this._importHealthFromURL();
 
+    // Auto-check clipboard for health data on unlock and every time app comes to foreground
+    this._checkClipboardHealth();
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) this._checkClipboardHealth();
+    });
+
     // Check for crash-recovered session
     const active = TF.data.getActiveSession();
     if (active && !active.completed) {
@@ -73,6 +79,44 @@ TF.app = {
     // Render initial view
     this.renderDashboard();
     TF.router.navigate('dashboard');
+  },
+
+  async _checkClipboardHealth() {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text || !text.includes('"steps"')) return;
+      const data = JSON.parse(text);
+      if (!data.steps && !data.distance && !data.calories) return;
+
+      // Avoid importing the same data twice
+      const key = `_healthImported_${data.date || TF.utils.todayStr()}`;
+      if (localStorage.getItem(key)) return;
+      localStorage.setItem(key, '1');
+
+      // Clear clipboard so it doesn't re-import next time
+      navigator.clipboard.writeText('').catch(() => {});
+
+      const log = {
+        date: data.date || TF.utils.todayStr(),
+        source: 'shortcut',
+        steps: parseInt(data.steps) || 0,
+        distanceKm: parseFloat(data.distance) || 0,
+        calories: parseFloat(data.calories) || 0
+      };
+      TF.data.saveCardioLog(log);
+      TF.data.saveHealthData({ ...log });
+      this.renderDashboard();
+
+      const lang = TF.i18n.getLang();
+      setTimeout(() => {
+        this.showToast(lang === 'ru'
+          ? `Здоровье: ${log.steps} шаг · ${log.distanceKm.toFixed(1)} км · ${Math.round(log.calories)} ккал`
+          : `Health synced: ${log.steps} steps · ${log.distanceKm.toFixed(1)} km · ${Math.round(log.calories)} kcal`
+        );
+      }, 400);
+    } catch(e) {
+      // Clipboard not accessible or no permission — silent fail
+    }
   },
 
   _importHealthFromURL() {

@@ -241,22 +241,24 @@ TF.photos = {
         document.getElementById('photoPreviewImg').src = compressed;
         document.getElementById('photoPreview').style.display = 'block';
       } else {
-        // Bulk import: save all photos directly with today's date
+        // Bulk import: save all photos using selected date/angle from the form
+        const date = document.getElementById('photoDate').value || TF.utils.todayStr();
+        const angle = document.getElementById('photoAngle').value || 'front';
         for (const file of files) {
           const compressed = await TF.utils.compressImage(file, 800, 0.75);
           TF.data.savePhoto({
             id: TF.utils.generateId(),
-            date: TF.utils.todayStr(),
-            angle: 'front',
+            date,
+            angle,
             imageData: compressed,
             notes: '',
             weightAtTime: null,
             bodyFatAtTime: null
           });
         }
-        document.getElementById('addPhotoModal').classList.add('hidden');
+        document.getElementById('addPhotoModal').remove();
         TF.app.showToast(`${files.length} photos saved`);
-        this.render(document.getElementById('tab-progress'));
+        this.render();
       }
     });
   },
@@ -283,19 +285,24 @@ TF.photos = {
 
   _showPhotoDetail(photo) {
     const modal = document.createElement('div');
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:700;display:flex;flex-direction:column;align-items:center;padding:calc(env(safe-area-inset-top)+20px) 20px calc(env(safe-area-inset-bottom)+20px)';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:700;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px';
     modal.innerHTML = `
-      <button onclick="this.parentNode.remove()" style="position:absolute;top:calc(env(safe-area-inset-top)+12px);right:16px;background:rgba(255,255,255,0.15);color:white;border-radius:50%;width:32px;height:32px;font-size:16px;display:flex;align-items:center;justify-content:center">✕</button>
-      <img src="${photo.imageData}" style="max-width:100%;max-height:70vh;object-fit:contain;border-radius:12px">
+      <img src="${photo.imageData}" style="max-width:100%;max-height:65vh;object-fit:contain;border-radius:12px">
       <div style="color:white;margin-top:16px;text-align:center">
         <div style="font-size:18px;font-weight:700">${photo.date} — ${photo.angle}</div>
         ${photo.weightAtTime ? `<div style="color:rgba(255,255,255,0.7);margin-top:4px">${photo.weightAtTime} kg${photo.bodyFatAtTime ? ` · ${photo.bodyFatAtTime}%` : ''}</div>` : ''}
         ${photo.notes ? `<div style="color:rgba(255,255,255,0.6);margin-top:4px;font-size:14px">${photo.notes}</div>` : ''}
       </div>
-      <button onclick="TF.photos._deletePhoto('${photo.id}', this.closest('[style]'))"
-              style="margin-top:20px;background:var(--red);color:white;border-radius:10px;padding:12px 28px;font-size:16px;font-weight:600">
-        ${TF.i18n.t('photos.delete')}
-      </button>
+      <div style="display:flex;gap:12px;margin-top:20px">
+        <button onclick="TF.photos._deletePhoto('${photo.id}', this.closest('[style*=fixed]'))"
+                style="background:var(--red);color:white;border-radius:10px;padding:12px 28px;font-size:16px;font-weight:600">
+          ${TF.i18n.t('photos.delete')}
+        </button>
+        <button onclick="this.closest('[style*=fixed]').remove()"
+                style="background:rgba(255,255,255,0.15);color:white;border-radius:10px;padding:12px 28px;font-size:16px;font-weight:600">
+          Close
+        </button>
+      </div>
     `;
     document.body.appendChild(modal);
   },

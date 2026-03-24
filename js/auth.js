@@ -1,21 +1,11 @@
 window.TF = window.TF || {};
 
 TF.auth = {
-  _lockTimer: null,
-  _pinBuffer: [],
-  _setupMode: false, // 'set' | 'confirm'
-  _pendingHash: null,
-  _onUnlock: null,
-
   init(onUnlock) {
-    this._onUnlock = onUnlock;
-    if (!TF.data.hasPIN()) {
-      this._showSetup();
-    } else {
-      this._showLock();
-      this._checkAutoLock();
-    }
+    if (onUnlock) onUnlock();
   },
+  resetTimer() {},
+  lock() {},
 
   _showLock() {
     const profile = TF.data.getProfile();

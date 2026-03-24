@@ -131,7 +131,7 @@ TF.settings = {
       </div>
 
       <div class="settings-group" style="margin:0 16px 12px">
-        ${this._settingsRow('settings.version', '<span class="settings-row-value">1.1.3 (24 Mar)</span>')}
+        ${this._settingsRow('settings.version', '<span class="settings-row-value">1.1.4 (24 Mar)</span>')}
         ${this._settingsRow('settings.program.start', `<span class="settings-row-value">${programStart}</span>`)}
         ${this._settingsRow('settings.days.training', `<span class="settings-row-value">${daysTraining}</span>`)}
       </div>

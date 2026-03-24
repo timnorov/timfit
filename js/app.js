@@ -90,11 +90,6 @@ TF.app = {
       const data = JSON.parse(sanitized);
       if (!data.steps && !data.distance && !data.calories) return;
 
-      // Avoid importing the same data twice
-      const key = `_healthImported_${data.date || TF.utils.todayStr()}`;
-      if (localStorage.getItem(key)) return;
-      localStorage.setItem(key, '1');
-
       // Clear clipboard so it doesn't re-import next time
       navigator.clipboard.writeText('').catch(() => {});
 

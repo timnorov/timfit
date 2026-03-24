@@ -140,7 +140,7 @@ TF.data = {
 
   saveCardioLog(log) {
     const logs = this.getCardioLogs();
-    const idx = logs.findIndex(l => l.date === log.date && l.source === log.source);
+    const idx = logs.findIndex(l => l.date === log.date);
     if (idx >= 0) logs[idx] = { ...logs[idx], ...log };
     else logs.push(log);
     this._set(this.KEYS.CARDIO, logs);

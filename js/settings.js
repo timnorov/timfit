@@ -122,6 +122,9 @@ TF.settings = {
         ${this._settingsRow('settings.export', `<span class="settings-row-arrow">›</span>`, 'onclick="TF.settings._exportData()"')}
         ${this._settingsRow('settings.export.copy', `<span class="settings-row-arrow">›</span>`, 'onclick="TF.settings._copyDataToClipboard()"')}
         ${this._settingsRow('settings.import', `<span class="settings-row-arrow">›</span>`, 'onclick="TF.settings._importData()"')}
+        <div class="settings-row" onclick="TF.settings._clearCardioData()">
+          <span class="settings-row-label" style="color:var(--red)">Clear Cardio &amp; Health Data</span>
+        </div>
         <div class="settings-row" onclick="TF.settings._resetData()">
           <span class="settings-row-label" style="color:var(--red)">${TF.i18n.t('settings.reset')}</span>
         </div>
@@ -132,7 +135,7 @@ TF.settings = {
       </div>
 
       <div class="settings-group" style="margin:0 16px 12px">
-        ${this._settingsRow('settings.version', '<span class="settings-row-value">1.2.3 (24 Mar)</span>')}
+        ${this._settingsRow('settings.version', '<span class="settings-row-value">1.2.4 (24 Mar)</span>')}
         ${this._settingsRow('settings.program.start', `<span class="settings-row-value">${programStart}</span>`)}
         ${this._settingsRow('settings.days.training', `<span class="settings-row-value">${daysTraining}</span>`)}
       </div>
@@ -325,6 +328,14 @@ TF.settings = {
       }
     };
     input.click();
+  },
+
+  _clearCardioData() {
+    if (!confirm('Clear all cardio & health data? This cannot be undone.')) return;
+    localStorage.removeItem('tf_cardio');
+    localStorage.removeItem('tf_health');
+    TF.app.showToast('Cardio data cleared');
+    TF.app.renderDashboard();
   },
 
   _resetData() {

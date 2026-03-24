@@ -193,7 +193,7 @@ TF.photos = {
         <div style="margin-bottom:12px">
           <label style="display:block;padding:14px;background:var(--accent);color:white;border-radius:var(--radius-sm);text-align:center;font-weight:600;cursor:pointer">
             📷 ${TF.i18n.t('photos.camera')} / ${TF.i18n.t('photos.library')}
-            <input type="file" accept="image/*" id="photoFileInput" style="display:none" capture="environment">
+            <input type="file" accept="image/*" id="photoFileInput" style="display:none">
           </label>
         </div>
         <div id="photoPreview" style="display:none;margin-bottom:12px;border-radius:var(--radius-sm);overflow:hidden;max-height:200px">

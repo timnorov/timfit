@@ -241,26 +241,72 @@ TF.photos = {
         document.getElementById('photoPreviewImg').src = compressed;
         document.getElementById('photoPreview').style.display = 'block';
       } else {
-        // Bulk import: save all photos using selected date/angle from the form
-        const date = document.getElementById('photoDate').value || TF.utils.todayStr();
-        const angle = document.getElementById('photoAngle').value || 'front';
-        for (const file of files) {
-          const compressed = await TF.utils.compressImage(file, 800, 0.75);
-          TF.data.savePhoto({
-            id: TF.utils.generateId(),
-            date,
-            angle,
-            imageData: compressed,
-            notes: '',
-            weightAtTime: null,
-            bodyFatAtTime: null
-          });
-        }
-        document.getElementById('addPhotoModal').remove();
-        TF.app.showToast(`${files.length} photos saved`);
-        this.render();
+        // Bulk: show all previews with angle picker under each
+        modal.remove();
+        this._showBulkAnglePicker(files);
       }
     });
+  },
+
+  async _showBulkAnglePicker(files) {
+    const angles = ['front', 'back', 'left', 'right'];
+    const date = TF.utils.todayStr();
+
+    // Compress all first
+    const items = await Promise.all(files.map(async (file, i) => ({
+      compressed: await TF.utils.compressImage(file, 800, 0.75),
+      index: i
+    })));
+
+    const bulk = document.createElement('div');
+    bulk.id = 'bulkAngleModal';
+    bulk.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:700;overflow-y:auto;padding:16px 16px calc(env(safe-area-inset-bottom)+80px)';
+    bulk.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <button onclick="document.getElementById('bulkAngleModal').remove()" style="background:var(--bg-card2);border:none;border-radius:8px;padding:8px 12px;font-size:14px;color:var(--text)">✕ Cancel</button>
+        <div style="font-size:17px;font-weight:700">Set angle for each photo</div>
+      </div>
+      <div id="bulkGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"></div>
+    `;
+    document.body.appendChild(bulk);
+
+    const grid = document.getElementById('bulkGrid');
+    items.forEach(({ compressed, index }) => {
+      const card = document.createElement('div');
+      card.style.cssText = 'background:var(--bg-card);border-radius:12px;overflow:hidden';
+      card.innerHTML = `
+        <img src="${compressed}" style="width:100%;aspect-ratio:3/4;object-fit:cover">
+        <div style="padding:8px">
+          <select data-index="${index}" style="width:100%;background:var(--bg-card2);border:none;border-radius:8px;padding:8px;font-size:14px;color:var(--text)">
+            ${angles.map(a => `<option value="${a}">${a}</option>`).join('')}
+          </select>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn btn-primary';
+    saveBtn.style.cssText = 'position:fixed;bottom:calc(env(safe-area-inset-bottom)+16px);left:16px;right:16px;';
+    saveBtn.textContent = `Save ${files.length} photos`;
+    saveBtn.onclick = async () => {
+      const selects = bulk.querySelectorAll('select[data-index]');
+      selects.forEach((sel, i) => {
+        TF.data.savePhoto({
+          id: TF.utils.generateId(),
+          date,
+          angle: sel.value,
+          imageData: items[i].compressed,
+          notes: '',
+          weightAtTime: null,
+          bodyFatAtTime: null
+        });
+      });
+      bulk.remove();
+      TF.app.showToast(`${files.length} photos saved`);
+      this.render();
+    };
+    bulk.appendChild(saveBtn);
   },
 
   async _savePhoto() {

@@ -2,6 +2,19 @@ window.TF = window.TF || {};
 
 TF.app = {
   init() {
+    // Capture health URL params immediately before anything else
+    // (PIN screen will show next, so we store params to import after unlock)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('steps') || params.get('distance') || params.get('calories')) {
+      localStorage.setItem('_pendingHealth', JSON.stringify({
+        steps: params.get('steps'),
+        distance: params.get('distance'),
+        calories: params.get('calories'),
+        date: params.get('date')
+      }));
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
     // Apply theme early to prevent flash
     TF.settings.applyThemeFromProfile();
 
@@ -63,32 +76,30 @@ TF.app = {
   },
 
   _importHealthFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    const steps = params.get('steps');
-    const distance = params.get('distance');
-    const calories = params.get('calories');
-    const date = params.get('date');
-    if (!steps && !distance && !calories) return;
+    const raw = localStorage.getItem('_pendingHealth');
+    if (!raw) return;
+    localStorage.removeItem('_pendingHealth');
 
-    const log = {
-      date: date || TF.utils.todayStr(),
-      source: 'shortcut',
-      steps: parseInt(steps) || 0,
-      distanceKm: parseFloat(distance) || 0,
-      calories: parseFloat(calories) || 0
-    };
-    TF.data.saveCardioLog(log);
-    TF.data.saveHealthData({ ...log });
-
-    // Clean URL without reloading
-    const clean = window.location.pathname;
-    window.history.replaceState({}, '', clean);
-
-    const lang = TF.i18n.getLang();
-    this.showToast(lang === 'ru'
-      ? `Здоровье: ${log.steps} шаг · ${log.distanceKm} км · ${log.calories} ккал`
-      : `Health synced: ${log.steps} steps · ${log.distanceKm} km · ${log.calories} kcal`
-    );
+    try {
+      const p = JSON.parse(raw);
+      if (!p.steps && !p.distance && !p.calories) return;
+      const log = {
+        date: p.date || TF.utils.todayStr(),
+        source: 'shortcut',
+        steps: parseInt(p.steps) || 0,
+        distanceKm: parseFloat(p.distance) || 0,
+        calories: parseFloat(p.calories) || 0
+      };
+      TF.data.saveCardioLog(log);
+      TF.data.saveHealthData({ ...log });
+      const lang = TF.i18n.getLang();
+      setTimeout(() => {
+        this.showToast(lang === 'ru'
+          ? `Здоровье: ${log.steps} шаг · ${log.distanceKm.toFixed(1)} км · ${Math.round(log.calories)} ккал`
+          : `Health synced: ${log.steps} steps · ${log.distanceKm.toFixed(1)} km · ${Math.round(log.calories)} kcal`
+        );
+      }, 600);
+    } catch(e) {}
   },
 
   // --- Dashboard ---

@@ -121,7 +121,7 @@ TF.settings = {
       </div>
 
       <div class="settings-group" style="margin:0 16px 12px">
-        ${this._settingsRow('settings.version', '<span class="settings-row-value">1.2.6 (25 Mar)</span>')}
+        ${this._settingsRow('settings.version', '<span class="settings-row-value">1.2.7 (25 Mar)</span>')}
         ${this._settingsRow('settings.program.start', `<span class="settings-row-value">${programStart}</span>`)}
         ${this._settingsRow('settings.days.training', `<span class="settings-row-value">${daysTraining}</span>`)}
       </div>
@@ -277,12 +277,18 @@ TF.settings = {
 
   _copyDataToClipboard() {
     const data = JSON.stringify(TF.data.exportAll(), null, 2);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(data)
+        .then(() => TF.app.showToast('Data copied to clipboard'))
+        .catch(() => TF.app.showToast('Copy failed — try Export JSON instead'));
+      return;
+    }
     const ta = document.createElement('textarea');
     ta.value = data;
-    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+    ta.style.cssText = 'position:fixed;top:0;left:0;width:2px;height:2px;opacity:0;';
     document.body.appendChild(ta);
     ta.focus();
-    ta.select();
+    ta.setSelectionRange(0, data.length);
     try {
       document.execCommand('copy');
       TF.app.showToast('Data copied to clipboard');

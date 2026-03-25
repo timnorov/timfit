@@ -101,20 +101,6 @@ TF.settings = {
               onclick="TF.settings._saveRestDefaults()">${TF.i18n.t('settings.save')}</button>
 
       <div class="section-header">
-        <h2 class="section-title">${TF.i18n.t('settings.cardio.setup')}</h2>
-      </div>
-
-      <div class="card" style="margin:0 16px 12px">
-        <div class="card-body">
-          <div style="font-size:15px;font-weight:700;margin-bottom:12px">${TF.i18n.t('cardio.shortcut.title')}</div>
-          ${[1,2,3,4,5,6,7,8,9].map(i => `<div style="font-size:13px;color:var(--text2);padding:3px 0;line-height:1.5">${TF.i18n.t('cardio.shortcut.' + i)}</div>`).join('')}
-          <button class="btn btn-primary btn-full" style="margin-top:12px" onclick="TF.cardio.pasteHealth()">
-            ${TF.i18n.t('cardio.paste')}
-          </button>
-        </div>
-      </div>
-
-      <div class="section-header">
         <h2 class="section-title">${TF.i18n.t('settings.data')}</h2>
       </div>
 
@@ -135,7 +121,7 @@ TF.settings = {
       </div>
 
       <div class="settings-group" style="margin:0 16px 12px">
-        ${this._settingsRow('settings.version', '<span class="settings-row-value">1.2.5 (24 Mar)</span>')}
+        ${this._settingsRow('settings.version', '<span class="settings-row-value">1.2.6 (25 Mar)</span>')}
         ${this._settingsRow('settings.program.start', `<span class="settings-row-value">${programStart}</span>`)}
         ${this._settingsRow('settings.days.training', `<span class="settings-row-value">${daysTraining}</span>`)}
       </div>
@@ -291,11 +277,19 @@ TF.settings = {
 
   _copyDataToClipboard() {
     const data = JSON.stringify(TF.data.exportAll(), null, 2);
-    navigator.clipboard.writeText(data).then(() => {
+    const ta = document.createElement('textarea');
+    ta.value = data;
+    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+      document.execCommand('copy');
       TF.app.showToast('Data copied to clipboard');
-    }).catch(() => {
+    } catch(e) {
       TF.app.showToast('Copy failed — try Export JSON instead');
-    });
+    }
+    ta.remove();
   },
 
   _exportData() {

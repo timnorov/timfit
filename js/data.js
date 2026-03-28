@@ -86,6 +86,17 @@ TF.data = {
       .sort((a, b) => b.date.localeCompare(a.date))[0] || null;
   },
 
+  getLastLogForExercise(exerciseId) {
+    const sessions = this.getWorkoutSessions()
+      .filter(s => s.completed)
+      .sort((a, b) => b.date.localeCompare(a.date));
+    for (const session of sessions) {
+      const log = session.exerciseLogs.find(e => e.exerciseId === exerciseId);
+      if (log) return log;
+    }
+    return null;
+  },
+
   getTodaySession() {
     const today = TF.utils.todayStr();
     const sessions = this.getWorkoutSessions();

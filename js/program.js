@@ -67,17 +67,17 @@ TF.PROGRAM = {
         startingWeight: 80
       },
       {
-        id: 'seated_db_overhead_press',
-        name: 'Seated Dumbbell Overhead Press',
-        gif: 'assets/gifs/seated_db_overhead_press.png',
-        muscles: ['Side Delts', 'Front Delts', 'Triceps', 'Upper Traps'],
-        muscleKeys: ['muscle.side.delts', 'muscle.front.delts', 'muscle.triceps', 'muscle.traps'],
-        sets: 4, repsMin: 8, repsMax: 10, rest: 120, rpe: '8',
-        equipment: 'Dumbbells + adjustable bench',
-        grip: 'Neutral at start (palms facing each other), rotate to semi-pronated at top',
-        cuesEn: 'Bench at 80–90°, back fully supported, core braced. Elbows at shoulder height at bottom position. Press in slight arc overhead — do not aggressively lock out at top. Lower slowly for full stretch. Control the weight on the way down.',
-        cuesRu: 'Скамья под углом 80–90°, спина полностью прижата, корпус напряжён. Локти на уровне плеч в нижней точке. Жим по лёгкой дуговой траектории вверх — не блокируйте резко в верхней точке. Медленный опуск до полного растяжения. Контролируйте вес на пути вниз.',
-        startingWeight: 20
+        id: 'hdw_iso_lateral_incline_press',
+        name: 'HDW Iso-Lateral Incline Press',
+        gif: 'assets/gifs/hdw_iso_lateral_incline_press.png',
+        muscles: ['Upper Pectorals', 'Front Delts', 'Triceps'],
+        muscleKeys: ['muscle.upper.chest', 'muscle.front.delts', 'muscle.triceps'],
+        sets: 3, repsMin: 10, repsMax: 12, rest: 90, rpe: '8',
+        equipment: 'HDW iso-lateral incline chest press machine',
+        grip: 'Neutral (palms facing each other), handles at chest height',
+        cuesEn: 'Set seat height so handles meet at upper chest level. Press each arm independently — this is the key advantage. Full stretch at bottom, feel the upper chest load at the deepest point. Do NOT lock out at top — keep tension on muscle throughout. Controlled 2-sec descent. If one arm feels weaker, that side gets extra focus each set. Weight shown is per side — load both sides equally.',
+        cuesRu: 'Настройте высоту сиденья так, чтобы ручки встречались на уровне верхней части груди. Жимайте каждой рукой независимо — это ключевое преимущество тренажёра. Полное растяжение внизу, ощутите нагрузку на верхнюю грудь в самой глубокой точке. НЕ блокируйте руки вверху — сохраняйте напряжение в мышце на протяжении всего движения. Контролируемый опуск 2 секунды. Если одна рука слабее, уделяйте ей дополнительное внимание в каждом подходе. Вес указан на сторону — загружайте обе стороны одинаково.',
+        startingWeight: 40
       },
       {
         id: 'cable_lateral_raise',
@@ -188,8 +188,8 @@ TF.PROGRAM = {
         handle: 'V-bar or double D-handles',
         pulley: 'Lowest position',
         grip: 'Neutral (palms facing each other)',
-        cuesEn: 'Lean slightly forward at start to stretch lats. Pull to lower abdomen. Drive elbows straight back past sides. Squeeze mid-back hard — hold 1 sec. 2–3 sec eccentric. Torso stays still — arms only.',
-        cuesRu: 'Небольшой наклон вперёд в начале для растяжения широчайших. Тяните к нижней части живота. Локти идут строго назад мимо боков. Сильно сожмите середину спины — держите 1 секунду. Эксцентрическая фаза 2–3 секунды. Корпус неподвижен — только руки.',
+        cuesEn: 'Sit tall, feet flat on platform. Lean SLIGHTLY forward at the start to get a full lat stretch — then pull. Elbows travel back at 45° from torso — tucked in, not flaring wide. Pull V-bar to your NAVEL, not your chest. Squeeze shoulder blades together at full contraction. Hold 1 sec at peak. Controlled 2-sec return — lean forward again slightly to reload the stretch before each rep. Do NOT use momentum or rock the torso.',
+        cuesRu: 'Сидите прямо, стопы на платформе. В начале НЕМНОГО наклонитесь вперёд для полного растяжения широчайших — затем тяните. Локти движутся назад под углом 45° к торсу — прижатые, не развёрнутые широко. Тяните V-гриф к ПУПКУ, а не к груди. Сведите лопатки в точке полного сокращения. Задержите 1 секунду в пике. Контролируемый возврат 2 секунды — снова немного наклоняйтесь вперёд для перезагрузки растяжения перед каждым повторением. НЕ используйте инерцию и не раскачивайте торс.',
         startingWeight: 60
       },
       {
@@ -229,8 +229,8 @@ TF.PROGRAM = {
         sets: 3, repsMin: 10, repsMax: 12, rest: 60, rpe: '7',
         equipment: 'Dumbbells',
         grip: 'Neutral throughout — palms facing body. NO supination.',
-        cuesEn: 'Alternate arms each rep. Slight forward lean at bottom for better brachialis stretch. Curl to shoulder height, lower fully. Alternating = full neural focus per arm + fixes strength imbalances between sides.',
-        cuesRu: 'Чередуйте руки на каждом повторении. Лёгкий наклон вперёд внизу для лучшего растяжения брахиалиса. Сгибайте до уровня плеч, опускайте полностью. Поочерёдное выполнение = полная нейронная концентрация на каждой руке + устраняет дисбаланс силы.',
+        cuesEn: 'Stand tall, elbows pinned at sides — they do NOT move forward or swing during the curl. Neutral grip throughout — palms face your body at all times, NO supination. Alternate arms each rep. Curl to just past 90° — forearm meets upper arm. Zero body swing — if you need to rock, the weight is too heavy. This builds the brachialis (thickness under the bicep) and brachioradialis (forearm). Slow 2-sec descent.',
+        cuesRu: 'Стоять прямо, локти прижаты к бокам — они НЕ движутся вперёд и не раскачиваются во время сгибания. Нейтральный хват на протяжении всего движения — ладони всегда смотрят к телу, БЕЗ супинации. Чередуйте руки на каждом повторении. Сгибайте чуть дальше 90° — предплечье встречается с плечом. Никакого раскачивания тела — если вы качаетесь, вес слишком большой. Это развивает брахиалис (толщину под бицепсом) и плечелучевую мышцу (предплечье). Медленный опуск 2 секунды.',
         note: 'Per side',
         startingWeight: 16
       }
@@ -285,16 +285,17 @@ TF.PROGRAM = {
         startingWeight: 100
       },
       {
-        id: 'lying_leg_curl',
-        name: 'Lying Leg Curl (Machine)',
-        gif: 'assets/gifs/lying_leg_curl.png',
-        muscles: ['Biceps Femoris', 'Semitendinosus'],
+        id: 'seated_leg_curl',
+        name: 'Seated Leg Curl (Machine)',
+        gif: 'assets/gifs/seated_leg_curl.png',
+        muscles: ['Biceps Femoris', 'Semitendinosus', 'Semimembranosus'],
         muscleKeys: ['muscle.hamstrings'],
-        sets: 3, repsMin: 10, repsMax: 12, rest: 90, rpe: '7–8',
-        equipment: 'Lying leg curl machine',
-        cuesEn: 'Pad just above Achilles — NOT mid-calf. Toes pointed slightly. Full stretch at bottom on every rep — critical for hamstring hypertrophy. Slow 3-sec eccentric.',
-        cuesRu: 'Валик чуть выше ахиллова сухожилия — НЕ на середине икры. Носки слегка вытянуты. Полное растяжение внизу на каждом повторении — критически важно для роста бицепса бедра. Медленная эксцентрическая фаза 3 секунды.',
-        startingWeight: 30
+        sets: 3, repsMin: 10, repsMax: 12, rest: 120, rpe: '7–8',
+        equipment: 'Seated leg curl machine',
+        grip: 'Hands hold side grips, back straight against pad',
+        cuesEn: 'Sit tall, back fully against the pad. Hip is flexed at ~90° — this is what makes seated superior to lying. The pre-stretched hamstring position creates a longer range of activation. Let legs extend FULLY at the start of each rep — that stretched position is where growth stimulus is strongest. Curl until just past 90°. Slow 3-sec eccentric on the way back up. Do NOT let the weight slam at the top.',
+        cuesRu: 'Сидите прямо, спина полностью прижата к подушке. Тазобедренный сустав согнут примерно на 90° — именно это делает сидячий вариант лучше лежачего. Предварительно растянутое положение бицепса бедра создаёт более длинный диапазон активации. Полностью выпрямляйте ноги в начале каждого повторения — растянутое положение даёт наибольший стимул для роста. Сгибайте до угла чуть более 90°. Медленная эксцентрическая фаза 3 секунды на пути обратно. НЕ бросайте вес в верхней точке.',
+        startingWeight: 35
       },
       {
         id: 'standing_calf_raise',
@@ -348,19 +349,37 @@ TF.PROGRAM = {
         startingWeight: 24
       },
       {
-        id: 'cable_chest_fly',
-        name: 'Cable Chest Fly (Low Pulley Crossover)',
-        gif: 'assets/gifs/cable_chest_fly.png',
-        muscles: ['Pectorals (Sternal + Clavicular)', 'Front Delts'],
-        muscleKeys: ['muscle.chest', 'muscle.upper.chest', 'muscle.front.delts'],
-        sets: 3, repsMin: 12, repsMax: 15, rest: 90, rpe: '7–8',
-        equipment: 'Cable crossover + two D-handles',
-        handle: 'D-handle each side',
-        pulley: 'Lowest position',
-        grip: 'Neutral, elbows slightly bent and LOCKED throughout',
-        cuesEn: 'Stand in middle, slight forward lean. Start arms wide (maximum stretch). Arc forward and slightly upward until hands meet or cross at chest. Squeeze pecs as hands meet. Never let weight stack touch between reps.',
-        cuesRu: 'Стоять посередине, небольшой наклон вперёд. Начинайте с широко разведёнными руками (максимальное растяжение). Дуговое движение вперёд и чуть вверх до встречи рук у груди. Сожмите грудные, когда руки встретятся. Не позволяйте блинам касаться между повторениями.',
-        startingWeight: 12
+        _alternating: [
+          {
+            id: 'cable_chest_fly',
+            name: 'Cable Chest Fly (Low Pulley Crossover)',
+            altTag: 'Alt A',
+            gif: 'assets/gifs/cable_chest_fly.png',
+            muscles: ['Pectorals (Sternal + Clavicular)', 'Front Delts'],
+            muscleKeys: ['muscle.chest', 'muscle.upper.chest', 'muscle.front.delts'],
+            equipment: 'Cable crossover + two D-handles',
+            handle: 'D-handle each side',
+            pulley: 'Lowest position',
+            grip: 'Neutral, elbows slightly bent and LOCKED throughout',
+            cuesEn: 'Stand in middle, slight forward lean. Start arms wide (maximum stretch). Arc forward and slightly upward until hands meet or cross at chest. Squeeze pecs as hands meet. Never let weight stack touch between reps.',
+            cuesRu: 'Стоять посередине, небольшой наклон вперёд. Начинайте с широко разведёнными руками (максимальное растяжение). Дуговое движение вперёд и чуть вверх до встречи рук у груди. Сожмите грудные, когда руки встретятся. Не позволяйте блинам касаться между повторениями.',
+            startingWeight: 12
+          },
+          {
+            id: 'hdw_iso_lateral_horizontal_press',
+            name: 'HDW Iso-Lateral Horizontal Press',
+            altTag: 'Alt B',
+            gif: 'assets/gifs/hdw_iso_lateral_horizontal_press.png',
+            muscles: ['Pectorals (Sternal, Lower)', 'Front Delts'],
+            muscleKeys: ['muscle.chest', 'muscle.front.delts'],
+            equipment: 'HDW iso-lateral horizontal chest press machine',
+            grip: 'Neutral (palms facing each other)',
+            cuesEn: 'Seat height so handles align with mid-chest. Press each arm independently through full range. Full stretch at the bottom — let the chest open completely. Do NOT lock out at top, keep continuous tension. Targets the lower and outer chest differently from the incline angle. 2-sec controlled descent every rep. Weight shown is per side.',
+            cuesRu: 'Высота сиденья так, чтобы ручки были на уровне середины груди. Жимайте каждой рукой независимо через полную амплитуду. Полное растяжение внизу — дайте груди полностью раскрыться. НЕ блокируйте руки вверху, сохраняйте постоянное напряжение. Нагружает нижнюю и внешнюю часть груди иначе, чем наклонный вариант. Контролируемый опуск 2 секунды на каждом повторении. Вес указан на сторону.',
+            startingWeight: 40
+          }
+        ],
+        sets: 3, repsMin: 12, repsMax: 15, rest: 90, rpe: '7–8'
       },
       {
         id: 'arnold_press',
@@ -462,8 +481,8 @@ TF.PROGRAM = {
         sets: 4, repsMin: 10, repsMax: 12, rest: 90, rpe: '8',
         equipment: 'Dumbbells + incline bench',
         grip: 'Neutral (palms facing each other)',
-        cuesEn: 'Set bench 30–45°, lie FACE DOWN chest against pad. Dumbbells hang below in full stretch. Row elbows straight back, squeeze shoulder blades at top. Eliminates ALL lower back stress — every rep is pure upper back. Cannot be cheated.',
-        cuesRu: 'Угол скамьи 30–45°, лечь ЛИЦОМ ВНИЗ, грудью на подушку. Гантели свисают вниз в полном растяжении. Тяните локти строго назад, сводите лопатки вверху. Полностью устраняет нагрузку на поясницу — каждое повторение это чистая верхняя спина. Невозможно схитрить.',
+        cuesEn: 'Set incline bench to 30–35°. Lie FACE DOWN with chest fully against the pad — do not lift chest off at any point. Dumbbells hang straight down in a dead stretch at the start. Row elbows OUT and BACK at 60–70° from your torso — NOT tucked close to your sides (that works lats, not upper back). Pull toward your lower chest / upper abdomen. Squeeze shoulder blades together hard at the top, hold 1 sec. Lower slowly through full stretch — feel the mid-back and rhomboids stretch at the bottom. Cannot be cheated — pure upper back work.',
+        cuesRu: 'Установите угол скамьи 30–35°. Лягте ЛИЦОМ ВНИЗ, грудь полностью прижата к подушке — не отрывайте грудь ни в какой момент. Гантели свисают вертикально вниз в полном растяжении. Тяните локти НАРУЖУ и НАЗАД под углом 60–70° от торса — НЕ прижимайте к бокам (это нагрузит широчайшие, а не верхнюю спину). Тяните к нижней части груди / верху живота. Сильно сведите лопатки в верхней точке, задержите 1 секунду. Медленно опускайте через полное растяжение — ощутите растяжение середины спины и ромбовидных внизу. Невозможно схитрить — чистая работа верхней спины.',
         startingWeight: 22
       },
       {
@@ -482,19 +501,17 @@ TF.PROGRAM = {
         startingWeight: 55
       },
       {
-        id: 'cable_rear_delt_fly',
-        name: 'Cable Rear Delt Fly (Bent-Over, Crossed)',
-        gif: 'assets/gifs/cable_rear_delt_fly.png',
+        id: 'pec_fly_rear_delt_machine',
+        name: 'Rear Delt Machine (Pec Fly / Rear Delt)',
+        gif: 'assets/gifs/rear_delt_machine.png',
         muscles: ['Rear Deltoid', 'Infraspinatus', 'Teres Minor'],
         muscleKeys: ['muscle.rear.delts', 'muscle.back'],
         sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '7',
-        equipment: 'Cable crossover + two D-handles',
-        handle: 'D-handles CROSSED (right holds left cable, left holds right cable)',
-        pulley: 'Face height or just above',
-        grip: 'Neutral, elbows slightly bent and fixed',
-        cuesEn: 'Bend over at 90°. Arms sweep wide in arc. Pause at peak with arms fully spread. Crossed cables maintain constant tension — unlike dumbbell reverse flies which go slack.',
-        cuesRu: 'Наклонитесь на 90°. Руки движутся по широкой дуге. Пауза в конечной точке с полностью разведёнными руками. Скрещённые тросы поддерживают постоянное натяжение — в отличие от гантелей, которые теряют нагрузку в верхней точке.',
-        startingWeight: 8
+        equipment: 'Pec fly / rear delt combo machine set to REAR DELT mode',
+        grip: 'Neutral, arms extended forward grabbing rear delt handles (NOT the chest fly handles)',
+        cuesEn: 'Adjust seat so handles are at exact shoulder height. Select REAR DELT mode on the machine (arms sweep backward, not inward). Sit tall with chest against pad. Sweep both arms backward in a wide arc, pause 1 sec at maximum rear position — squeeze rear delts. Do NOT shrug or involve traps. Return slowly, 2-sec eccentric. Light weight, full range of motion, full squeeze at peak. This is isolation work — do NOT go heavy.',
+        cuesRu: 'Отрегулируйте сиденье так, чтобы ручки были точно на уровне плеч. Выберите режим ЗАДНИЕ ДЕЛЬТЫ на тренажёре (руки движутся назад, а не внутрь). Сидите прямо, грудь прижата к подушке. Разведите обе руки назад по широкой дуге, задержитесь 1 секунду в крайнем заднем положении — сожмите задние дельты. НЕ поднимайте плечи и не включайте трапеции. Медленный возврат, эксцентрик 2 секунды. Лёгкий вес, полная амплитуда, полное сжатие в пике. Это изоляция — НЕ берите большой вес.',
+        startingWeight: 12
       },
       {
         id: 'incline_db_curl',
@@ -519,8 +536,8 @@ TF.PROGRAM = {
         equipment: 'Cable machine + D-handle',
         pulley: 'Lowest position',
         grip: 'Supinated throughout',
-        cuesEn: 'Arm fully extended at start — cable maintains tension at full extension where dumbbells go slack. Curl to full contraction. Fixes strength imbalances between sides. Slow 3-sec negative.',
-        cuesRu: 'Рука полностью выпрямлена в начале — трос сохраняет нагрузку в точке полного растяжения, где гантели её теряют. Сгибайте до полного сокращения. Устраняет дисбаланс силы между сторонами. Медленный негатив 3 секунды.',
+        cuesEn: 'Stand facing the cable stack, D-handle in one hand, pulley at lowest position. Elbow pinned at your side — it does NOT move forward, backward, or swing. Only your forearm moves. Supinated grip throughout (palm faces UP/forward). Arm FULLY extended at the start — cable maintains constant tension even at the bottom, unlike dumbbells. Curl to full contraction, squeeze at top. Slow 2-sec descent to full extension. Zero body sway — if you rock, reduce the weight. Directly fixes left/right strength imbalances.',
+        cuesRu: 'Стоять лицом к тросовой стойке, D-ручка в одной руке, блок в нижнем положении. Локоть прижат к боку — он НЕ движется вперёд, назад и не раскачивается. Двигается только предплечье. Супинированный хват на протяжении всего движения (ладонь смотрит ВВЕРХ/вперёд). Рука ПОЛНОСТЬЮ выпрямлена в начале — трос сохраняет постоянное натяжение даже внизу, в отличие от гантелей. Сгибайте до полного сокращения, сжимайте вверху. Медленный опуск 2 секунды до полного разгибания. Никакого раскачивания тела — если качаетесь, уменьшите вес. Напрямую устраняет дисбаланс силы между левой и правой сторонами.',
         note: 'Per side',
         startingWeight: 10
       }
@@ -535,16 +552,16 @@ TF.PROGRAM = {
     warmup: true,
     exercises: [
       {
-        id: 'bulgarian_split_squat',
-        name: 'Bulgarian Split Squat (Dumbbell)',
-        gif: 'assets/gifs/bulgarian_split_squat.png',
-        muscles: ['Quads', 'Glutes', 'Hamstrings', 'Balance'],
+        id: 'db_reverse_lunge',
+        name: 'Dumbbell Reverse Lunge',
+        gif: 'assets/gifs/db_reverse_lunge.png',
+        muscles: ['Quads', 'Glutes', 'Hamstrings'],
         muscleKeys: ['muscle.quads', 'muscle.glutes', 'muscle.hamstrings'],
         sets: 3, repsMin: 10, repsMax: 12, rest: 120, rpe: '8',
-        equipment: 'Dumbbells + flat bench',
-        grip: 'Neutral, dumbbells at sides',
-        cuesEn: 'Rear foot on bench LACES DOWN. Front foot forward enough that shin stays roughly vertical. Drop rear knee straight down. Front knee tracks over toes. Lean torso slightly forward = more glute activation. START LIGHTER THAN EXPECTED — this is harder than it looks.',
-        cuesRu: 'Задняя нога на скамье ШНУРКАМИ ВНИЗ. Передняя нога достаточно далеко вперёд, чтобы голень оставалась примерно вертикальной. Опускайте заднее колено прямо вниз. Переднее колено идёт по линии носка. Лёгкий наклон корпуса вперёд = больше нагрузки на ягодицы. НАЧИНАЙТЕ С МЕНЬШЕГО ВЕСА, ЧЕМ ОЖИДАЕТЕ — сложнее, чем выглядит.',
+        equipment: 'Dumbbells',
+        grip: 'Neutral, dumbbells hanging at sides',
+        cuesEn: 'Stand tall, feet hip-width. Step ONE foot directly backward — about 60–80cm. Lower the rear knee toward the floor, stopping just before contact. Front shin stays VERTICAL — front knee does NOT shoot past toes. Weight stays on front heel. Drive back up through front heel to return to standing. Both legs do all reps before switching, OR alternate — choose the same pattern every session. Torso stays upright throughout — do NOT lean forward. More stable than Bulgarian split squat because both feet stay on the floor. Weight shown is per dumbbell.',
+        cuesRu: 'Стоять прямо, ноги на ширине бёдер. Шагните ОДНОЙ ногой строго назад — примерно на 60–80 см. Опустите заднее колено к полу, остановившись чуть выше контакта. Голень передней ноги остаётся ВЕРТИКАЛЬНОЙ — переднее колено НЕ выходит за носок. Вес на пятке передней ноги. Поднимайтесь через пятку передней ноги в исходное положение. Выполните все повторения одной ногой, затем смените — или чередуйте, выбирайте один и тот же паттерн каждую тренировку. Корпус прямой на протяжении всего движения — НЕ наклоняйтесь вперёд. Устойчивее болгарского выпада, так как обе ноги остаются на полу. Вес указан на каждую гантель.',
         note: 'Per leg',
         startingWeight: 16
       },
@@ -557,8 +574,8 @@ TF.PROGRAM = {
         sets: 4, repsMin: 10, repsMax: 12, rest: 120, rpe: '8',
         equipment: 'Hack squat machine',
         note: 'Foot position: LOW and NARROW on platform',
-        cuesEn: 'Low narrow position maximizes VMO activation — the teardrop above knee that gives athletic leg look. Descend as deep as possible. Knees track over toes. Safer for lower back than barbell squat.',
-        cuesRu: 'Низкая узкая позиция максимально нагружает ВМО (медиальная широкая) — слеза над коленом, которая создаёт атлетичный вид ног. Опускайтесь как можно глубже. Колени по линии носков. Безопаснее для поясницы, чем приседания со штангой.',
+        cuesEn: 'Feet LOW and NARROW on the platform — shoulder-width or slightly narrower, positioned low on the plate. This foot position maximizes VMO (teardrop quad) activation. Back flat against the pad throughout — do NOT round. Chest up. Descend as deep as possible — aim for thighs parallel or below. Knees track directly over toes — do NOT let them cave inward. Drive through FULL foot on the way up. Do NOT lock out knees at the top. 2-sec controlled descent. Safer for lower back than barbell squat — use it.',
+        cuesRu: 'Ноги НИЗКО и УЗКО на платформе — на ширине плеч или чуть уже, расположены низко на пластине. Такое положение ног максимально нагружает ВМО (медиальная широкая, «слеза»). Спина плоско прижата к подушке на протяжении всего движения — НЕ округляйте. Грудь вверх. Опускайтесь как можно глубже — стремитесь к параллели бёдер или ниже. Колени идут строго по линии носков — НЕ позволяйте им заваливаться внутрь. Жмите через ВСЮ стопу на подъёме. НЕ блокируйте колени вверху. Контролируемый опуск 2 секунды. Безопаснее для поясницы, чем приседания со штангой — используйте это.',
         startingWeight: 60
       },
       {
@@ -569,8 +586,8 @@ TF.PROGRAM = {
         muscleKeys: ['muscle.glutes', 'muscle.hamstrings'],
         sets: 3, repsMin: 15, repsMax: 20, rest: 90, rpe: '7–8',
         equipment: 'Dumbbell across hips or hip thrust machine',
-        cuesEn: 'Same mechanics as Legs A barbell hip thrust. Higher reps = metabolic hypertrophy stimulus. Glutes respond well to both heavy low-rep AND lighter high-rep in same week.',
-        cuesRu: 'Та же техника, что и в Ногах A с штангой. Больше повторений = метаболический стимул гипертрофии. Ягодицы хорошо реагируют как на тяжёлый низкоповторный, так и на более лёгкий высокоповторный режим в одну неделю.',
+        cuesEn: 'Same setup as Legs A hip thrust machine. Upper back (mid-scapula, NOT neck or shoulders) contacts the pad. Feet flat, hip-width, toes slightly out. This session: HIGHER REPS at slightly lighter weight than Legs A. Drive hips up explosively, squeeze glutes HARD at the top — hold 1 sec at full extension. Hips fully level at the top — do not tilt one side. Lower with control — 2-sec descent. Do NOT let hips crash down between reps. The glutes respond well to both heavy low-rep (Legs A) and metabolic higher-rep (this session) in the same week.',
+        cuesRu: 'Та же настройка, что и в тренажёре для тяги бёдер в Ногах A. Верхняя часть спины (середина лопатки, НЕ шея или плечи) касается подушки. Стопы плоско, на ширине бёдер, носки слегка наружу. Эта тренировка: БОЛЬШЕ ПОВТОРЕНИЙ с чуть меньшим весом, чем в Ногах A. Взрывной подъём бёдер, сильно сожмите ягодицы вверху — задержитесь 1 секунду в полном разгибании. Бёдра полностью ровные вверху — не кренитесь на одну сторону. Опускайте контролируемо — опуск 2 секунды. НЕ бросайте бёдра вниз между повторениями. Ягодицы хорошо реагируют как на тяжёлый низкоповторный режим (Ноги A), так и на метаболический высокоповторный (эта тренировка) в рамках одной недели.',
         startingWeight: 30
       },
       {
@@ -617,8 +634,8 @@ TF.PROGRAM = {
         muscleKeys: ['muscle.core', 'muscle.lats'],
         sets: 3, repsMin: 8, repsMax: 12, rest: 60, rpe: '8',
         equipment: 'Ab wheel + mat',
-        cuesEn: 'Kneel on mat. Roll forward keeping hips in STRAIGHT LINE with torso. Do NOT let hips drop or lower back hyperextend — injury risk. Pause 1 sec at full extension. Pull back using ONLY abs. Start with partial range and build to full extension over weeks.',
-        cuesRu: 'Встаньте на колени на коврик. Катите вперёд, сохраняя бёдра на ОДНОЙ ЛИНИИ с торсом. НЕ позволяйте бёдрам проваливаться или пояснице прогибаться — риск травмы. Пауза 1 секунда в крайней точке. Возвращайтесь, используя ТОЛЬКО пресс. Начинайте с частичной амплитудой и постепенно увеличивайте её до полной.',
+        cuesEn: 'Kneel on mat, ab wheel directly below shoulders. EXHALE and brace your core hard before rolling out. Roll forward slowly — hips stay in a STRAIGHT LINE with torso, do NOT let hips drop or lower back hyperextend — this is the most common injury point. Go only as far as you can control with a neutral spine. Pause 1 sec at full extension. Pull back using ONLY your abs — imagine pulling your belly button to your spine. Start with PARTIAL range and build to full extension over weeks — do not force range.',
+        cuesRu: 'Встаньте на колени на коврик, колесо прямо под плечами. ВЫДОХНИТЕ и сильно зафиксируйте корпус перед началом движения. Медленно катите вперёд — бёдра остаются на ОДНОЙ ЛИНИИ с торсом, НЕ позволяйте бёдрам проваливаться или пояснице прогибаться — это самая частая точка травмы. Катитесь только настолько далеко, насколько можете контролировать нейтральное положение позвоночника. Пауза 1 секунда в крайней точке. Возвращайтесь, используя ТОЛЬКО пресс — представьте, что тянете пупок к позвоночнику. Начинайте с ЧАСТИЧНОЙ амплитуды и постепенно увеличивайте до полной — не форсируйте.',
         startingWeight: 0
       }
     ]
@@ -643,7 +660,29 @@ TF.APT_WARMUP = [
 
 TF.program = {
   getSession(type) {
-    return TF.PROGRAM[type] || null;
+    const session = TF.PROGRAM[type];
+    if (!session) return null;
+
+    // Resolve alternating exercises based on completed session count
+    const hasAlternating = session.exercises.some(ex => ex._alternating);
+    if (!hasAlternating) return session;
+
+    const completedCount = (TF.data ? TF.data.getWorkoutSessions() : [])
+      .filter(s => s.sessionType === type && s.completed).length;
+
+    return {
+      ...session,
+      exercises: session.exercises.map(ex => {
+        if (!ex._alternating) return ex;
+        const idx = completedCount % ex._alternating.length;
+        const chosen = ex._alternating[idx];
+        return {
+          ...chosen,
+          sets: ex.sets, repsMin: ex.repsMin, repsMax: ex.repsMax,
+          rest: ex.rest, rpe: ex.rpe
+        };
+      })
+    };
   },
 
   getTodaySession() {

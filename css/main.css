@@ -739,6 +739,8 @@ a { color: var(--accent); text-decoration: none; }
 .set-input-btn:active { background: var(--border); }
 .set-input-btn.active { border-color: var(--accent); }
 .set-x { font-size: 14px; color: var(--text3); }
+.per-db-label { font-size: 10px; color: var(--accent); font-weight: 600; display: block; line-height: 1; margin-top: 1px; }
+.alt-tag { font-size: 11px; font-weight: 700; color: white; background: var(--accent); border-radius: 4px; padding: 1px 5px; margin-left: 4px; vertical-align: middle; }
 
 .set-check-btn {
   width: 36px; height: 36px; border-radius: 50%;

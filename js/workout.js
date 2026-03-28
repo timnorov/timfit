@@ -49,7 +49,6 @@ TF.workout = {
     const session = TF.program.getSession(sessionType);
     if (!session || session.exercises.length === 0) return;
 
-    const lastSession = TF.data.getLastSessionOfType(sessionType);
     const id = TF.utils.generateId();
     const now = Date.now();
 
@@ -65,8 +64,8 @@ TF.workout = {
         exerciseName: ex.name,
         sets: Array.from({ length: ex.sets }, (_, i) => ({
           setNumber: i + 1,
-          weight: this._getLastWeight(lastSession, ex.id, i) || ex.startingWeight,
-          reps: this._getLastReps(lastSession, ex.id, i) || ex.repsMin,
+          weight: this._getLastWeightForExercise(ex.id, i, ex.startingWeight),
+          reps: this._getLastRepsForExercise(ex.id, i, ex.repsMin),
           completed: false,
           completedAt: null,
           isPR: false
@@ -111,18 +110,16 @@ TF.workout = {
     TF.app.renderDashboard();
   },
 
-  _getLastWeight(lastSession, exerciseId, setIndex) {
-    if (!lastSession) return null;
-    const exLog = lastSession.exerciseLogs.find(e => e.exerciseId === exerciseId);
-    if (!exLog || !exLog.sets[setIndex]) return null;
-    return exLog.sets[setIndex].weight || null;
+  _getLastWeightForExercise(exerciseId, setIndex, fallback) {
+    const log = TF.data.getLastLogForExercise(exerciseId);
+    if (!log || !log.sets[setIndex]) return fallback;
+    return log.sets[setIndex].weight || fallback;
   },
 
-  _getLastReps(lastSession, exerciseId, setIndex) {
-    if (!lastSession) return null;
-    const exLog = lastSession.exerciseLogs.find(e => e.exerciseId === exerciseId);
-    if (!exLog || !exLog.sets[setIndex]) return null;
-    return exLog.sets[setIndex].reps || null;
+  _getLastRepsForExercise(exerciseId, setIndex, fallback) {
+    const log = TF.data.getLastLogForExercise(exerciseId);
+    if (!log || !log.sets[setIndex]) return fallback;
+    return log.sets[setIndex].reps || fallback;
   },
 
   // --- Render Session Screen ---
@@ -200,8 +197,8 @@ TF.workout = {
     const log = this._session.exerciseLogs[exIdx];
     const lang = TF.i18n.getLang();
     const cues = lang === 'ru' ? ex.cuesRu : ex.cuesEn;
-    const lastSession = TF.data.getLastSessionOfType(this._session.sessionType);
-    const showOverloadBadge = this._checkOverloadReady(lastSession, ex);
+    const lastLog = TF.data.getLastLogForExercise(ex.id);
+    const showOverloadBadge = this._checkOverloadReady(lastLog, ex);
 
     const card = document.createElement('div');
     card.className = 'exercise-card';
@@ -227,7 +224,7 @@ TF.workout = {
     const muscleKeys = (ex.muscleKeys || []).slice(0, 3);
     info.innerHTML = `
       <div class="ex-number">${TF.i18n.t('ex.set')} ${exIdx + 1}</div>
-      <div class="ex-name">${ex.name}</div>
+      <div class="ex-name">${ex.name}${ex.altTag ? ` <span class="alt-tag">${ex.altTag}</span>` : ''}</div>
       <div class="ex-muscles">${muscleKeys.map(k =>
         `<span class="pill pill-blue">${TF.i18n.t(k)}</span>`
       ).join('')}</div>
@@ -293,6 +290,8 @@ TF.workout = {
     row.id = `set-row-${exIdx}-${setIdx}`;
 
     const weightLabel = ex.id.includes('pullup') ? '+' : '';
+    const isDumbbell = ex.equipment && ex.equipment.toLowerCase().includes('dumbbell');
+    const perDbLabel = isDumbbell ? `<span class="per-db-label">${TF.i18n.t('ex.per.db')}</span>` : '';
     row.innerHTML = `
       <div class="set-num">${setIdx + 1}</div>
       <div class="set-input-group">
@@ -300,7 +299,7 @@ TF.workout = {
              onclick="TF.workout._openPicker('weight', ${exIdx}, ${setIdx})">
           ${set.weight}
         </div>
-        <span class="set-x">${weightLabel}${TF.i18n.t('ex.weight')} ×</span>
+        <span class="set-x">${weightLabel}${TF.i18n.t('ex.weight')}${perDbLabel} ×</span>
         <div class="set-input-btn" id="reps-${exIdx}-${setIdx}"
              onclick="TF.workout._openPicker('reps', ${exIdx}, ${setIdx})">
           ${set.reps}
@@ -575,9 +574,7 @@ TF.workout = {
   },
 
   // --- Session completion check ---
-  _checkOverloadReady(lastSession, ex) {
-    if (!lastSession) return false;
-    const lastLog = lastSession.exerciseLogs.find(e => e.exerciseId === ex.id);
+  _checkOverloadReady(lastLog, ex) {
     if (!lastLog) return false;
     return lastLog.sets.every(s => s.completed && s.reps >= ex.repsMax);
   },
@@ -596,6 +593,9 @@ TF.workout = {
     if (ex.grip) equipInfo += `\nGrip: ${ex.grip}`;
     if (ex.handle) equipInfo += `\nHandle: ${ex.handle}`;
     if (ex.pulley) equipInfo += `\nPulley: ${ex.pulley}`;
+    if (ex.equipment && ex.equipment.toLowerCase().includes('dumbbell')) {
+      equipInfo += `\n${TF.i18n.t('ex.per.db.detail')}`;
+    }
     document.getElementById('modalEquipment').textContent = equipInfo;
 
     const gifEl = document.getElementById('modalGif');

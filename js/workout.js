@@ -102,6 +102,11 @@ TF.workout = {
     TF.app.hidePrimaryResumeBanner();
   },
 
+  minimizeWorkout() {
+    document.getElementById('activeWorkout').classList.add('hidden');
+    TF.router.navigate('dashboard');
+  },
+
   discardSession() {
     this._stopTimers();
     TF.data.clearActiveSession();
@@ -371,10 +376,13 @@ TF.workout = {
     // Save crash-recovery state
     TF.data.saveActiveSession(this._session);
 
+    // Reorder exercises if we skipped one
+    this._reorderIfSkipped(exIdx);
+
     // Start rest timer
     const session = TF.program.getSession(this._session.sessionType);
     const ex = session.exercises[exIdx];
-    this._startRestTimer(ex.rest, ex.name);
+    this._startRestTimer(ex.rest, ex.name, exIdx, setIdx);
 
     TF.auth.resetTimer();
   },
@@ -469,22 +477,20 @@ TF.workout = {
       if (el) el.textContent = value;
     }
 
-    // Auto-fill remaining uncompleted sets when first set is edited
-    if (setIdx === 0) {
-      const log = this._session.exerciseLogs[exIdx];
-      log.sets.forEach((s, i) => {
-        if (i === 0 || s.completed) return;
-        if (type === 'weight') {
-          s.weight = value;
-          const el = document.getElementById(`weight-${exIdx}-${i}`);
-          if (el) el.textContent = value;
-        } else {
-          s.reps = value;
-          const el = document.getElementById(`reps-${exIdx}-${i}`);
-          if (el) el.textContent = value;
-        }
-      });
-    }
+    // Auto-fill all following uncompleted sets when any set is edited
+    const log2 = this._session.exerciseLogs[exIdx];
+    log2.sets.forEach((s, i) => {
+      if (i <= setIdx || s.completed) return;
+      if (type === 'weight') {
+        s.weight = value;
+        const el = document.getElementById(`weight-${exIdx}-${i}`);
+        if (el) el.textContent = value;
+      } else {
+        s.reps = value;
+        const el = document.getElementById(`reps-${exIdx}-${i}`);
+        if (el) el.textContent = value;
+      }
+    });
 
     TF.data.saveActiveSession(this._session);
     this._closePicker();
@@ -496,8 +502,35 @@ TF.workout = {
     this._pickerContext = null;
   },
 
+  // --- Exercise reorder when skipping ---
+  _reorderIfSkipped(completedExIdx) {
+    const logs = this._session.exerciseLogs;
+
+    // Check if there are any exercises before completedExIdx with 0 completed sets
+    const hasSkipped = logs.slice(0, completedExIdx).some(log =>
+      log.sets.every(s => !s.completed)
+    );
+    if (!hasSkipped) return;
+
+    // Find the insertion point: right after the last exercise that has at least 1 completed set
+    let insertAfter = -1;
+    for (let i = 0; i < completedExIdx; i++) {
+      if (logs[i].sets.some(s => s.completed)) insertAfter = i;
+    }
+    const insertAt = insertAfter + 1;
+    if (insertAt === completedExIdx) return; // already in correct position
+
+    // Move the log
+    const [moved] = logs.splice(completedExIdx, 1);
+    logs.splice(insertAt, 0, moved);
+
+    // Re-render the exercise cards
+    this._renderSessionScreen();
+    TF.data.saveActiveSession(this._session);
+  },
+
   // --- Rest Timer ---
-  _startRestTimer(seconds, exerciseName) {
+  _startRestTimer(seconds, exerciseName, exIdx, setIdx) {
     this._timerRunning = true;
 
     // Schedule SW notification for when timer ends (background)
@@ -505,9 +538,55 @@ TF.workout = {
     TF.notifications.scheduleRestComplete(seconds * 1000, exerciseName);
 
     this._timerWorker.postMessage({ type: 'START', duration: seconds });
-    document.getElementById('timerExerciseName').textContent = exerciseName;
-    this._showTimerSheet();
-    this._showMiniTimer();
+
+    // Find next uncompleted set button and animate arc
+    this._startArcTimer(seconds, exIdx, setIdx);
+  },
+
+  _arcTimerRAF: null,
+  _startArcTimer(seconds, completedExIdx, completedSetIdx) {
+    // Cancel any existing arc timer
+    if (this._arcTimerRAF) {
+      cancelAnimationFrame(this._arcTimerRAF);
+      this._arcTimerRAF = null;
+    }
+    // Remove timing class from all buttons
+    document.querySelectorAll('.set-check-btn.timing').forEach(b => {
+      b.classList.remove('timing');
+      b.style.removeProperty('--arc');
+    });
+
+    // Find next uncompleted set button
+    let nextBtn = null;
+    const logs = this._session.exerciseLogs;
+    for (let ei = completedExIdx; ei < logs.length; ei++) {
+      const startSi = ei === completedExIdx ? completedSetIdx + 1 : 0;
+      for (let si = startSi; si < logs[ei].sets.length; si++) {
+        if (!logs[ei].sets[si].completed) {
+          nextBtn = document.getElementById(`check-${ei}-${si}`);
+          break;
+        }
+      }
+      if (nextBtn) break;
+    }
+    if (!nextBtn) return;
+
+    nextBtn.classList.add('timing');
+    const start = Date.now();
+    const duration = seconds * 1000;
+
+    const tick = () => {
+      const pct = Math.min((Date.now() - start) / duration * 100, 100);
+      nextBtn.style.setProperty('--arc', `${pct}%`);
+      if (pct < 100 && this._timerRunning) {
+        this._arcTimerRAF = requestAnimationFrame(tick);
+      } else {
+        nextBtn.classList.remove('timing');
+        nextBtn.style.removeProperty('--arc');
+        this._arcTimerRAF = null;
+      }
+    };
+    this._arcTimerRAF = requestAnimationFrame(tick);
   },
 
   _showTimerSheet() {
@@ -532,6 +611,14 @@ TF.workout = {
     this._hideTimerSheet();
     this._hideMiniTimer();
     TF.notifications.cancelRestNotif();
+    if (this._arcTimerRAF) {
+      cancelAnimationFrame(this._arcTimerRAF);
+      this._arcTimerRAF = null;
+    }
+    document.querySelectorAll('.set-check-btn.timing').forEach(b => {
+      b.classList.remove('timing');
+      b.style.removeProperty('--arc');
+    });
     TF.utils.vibrate([30]);
   },
 
@@ -699,5 +786,13 @@ TF.workout = {
     this._hideTimerSheet();
     this._hideMiniTimer();
     TF.notifications.cancelRestNotif();
+    if (this._arcTimerRAF) {
+      cancelAnimationFrame(this._arcTimerRAF);
+      this._arcTimerRAF = null;
+    }
+    document.querySelectorAll('.set-check-btn.timing').forEach(b => {
+      b.classList.remove('timing');
+      b.style.removeProperty('--arc');
+    });
   }
 };

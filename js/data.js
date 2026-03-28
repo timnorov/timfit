@@ -99,13 +99,13 @@ TF.data = {
 
   getTodaySession() {
     const today = TF.utils.todayStr();
-    const sessions = this.getWorkoutSessions();
-    return sessions.find(s => s.date === today) || null;
+    const sessions = this.getWorkoutSessions().filter(s => s.date === today);
+    return sessions.find(s => s.completed) || sessions[sessions.length - 1] || null;
   },
 
   getSessionByDate(dateStr) {
-    const sessions = this.getWorkoutSessions();
-    return sessions.find(s => s.date === dateStr) || null;
+    const sessions = this.getWorkoutSessions().filter(s => s.date === dateStr);
+    return sessions.find(s => s.completed) || sessions[sessions.length - 1] || null;
   },
 
   // --- Active Session (crash recovery) ---

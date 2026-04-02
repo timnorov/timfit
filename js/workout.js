@@ -127,10 +127,12 @@ TF.workout = {
     return log.sets[setIndex].reps || fallback;
   },
 
+  _expandedExIdx: 0,
+
   // --- Render Session Screen ---
   _renderSessionScreen() {
     const session = TF.program.getSession(this._session.sessionType);
-    const lang = TF.i18n.getLang();
+    const programExercises = session.exercises;
 
     document.getElementById('workoutTitle').textContent =
       `${TF.i18n.t(TF.SESSION_KEY_MAP[this._session.sessionType])} — ${TF.i18n.t(session.dayKey)}`;
@@ -143,9 +145,10 @@ TF.workout = {
       body.appendChild(this._buildWarmupCard());
     }
 
-    // Exercise cards
-    session.exercises.forEach((ex, exIdx) => {
-      body.appendChild(this._buildExerciseCard(ex, exIdx, session.warmup));
+    // Exercise cards — iterate exerciseLogs order, look up program data by ID
+    this._session.exerciseLogs.forEach((log, exIdx) => {
+      const ex = programExercises.find(e => e.id === log.exerciseId) || programExercises[exIdx];
+      body.appendChild(this._buildExerciseCard(ex, exIdx));
     });
 
     // Finish button (at bottom)
@@ -198,20 +201,28 @@ TF.workout = {
     document.querySelector('.warmup-card').style.opacity = '0.5';
   },
 
-  _buildExerciseCard(ex, exIdx, hasWarmup) {
+  _buildExerciseCard(ex, exIdx) {
     const log = this._session.exerciseLogs[exIdx];
     const lang = TF.i18n.getLang();
     const cues = lang === 'ru' ? ex.cuesRu : ex.cuesEn;
     const lastLog = TF.data.getLastLogForExercise(ex.id);
     const showOverloadBadge = this._checkOverloadReady(lastLog, ex);
+    const allDone = log.sets.every(s => s.completed);
+    const isExpanded = exIdx === this._expandedExIdx;
+    const completedCount = log.sets.filter(s => s.completed).length;
 
     const card = document.createElement('div');
-    card.className = 'exercise-card';
+    card.className = 'exercise-card' + (isExpanded ? '' : ' ex-collapsed');
     card.id = `ex-card-${exIdx}`;
 
-    // Header
+    // Header — tapping toggles collapse
     const header = document.createElement('div');
     header.className = 'exercise-card-header';
+    header.style.cursor = 'pointer';
+    header.addEventListener('click', (e) => {
+      if (e.target.closest('.ex-gif-thumb')) return; // gif tap opens modal
+      this._toggleExerciseCollapse(exIdx);
+    });
 
     // GIF thumb
     const gifThumb = document.createElement('div');
@@ -221,28 +232,30 @@ TF.workout = {
            onerror="this.parentNode.innerHTML='${this._getExerciseEmoji(ex)}';"
            loading="lazy">
     `;
-    gifThumb.addEventListener('click', () => this._showExerciseModal(ex));
+    gifThumb.addEventListener('click', (e) => { e.stopPropagation(); this._showExerciseModal(ex); });
 
     // Info
     const info = document.createElement('div');
     info.className = 'ex-info';
     const muscleKeys = (ex.muscleKeys || []).slice(0, 3);
     info.innerHTML = `
-      <div class="ex-number">${TF.i18n.t('ex.set')} ${exIdx + 1}</div>
+      <div class="ex-number">${TF.i18n.t('ex.set')} ${exIdx + 1}${allDone ? ' ✓' : completedCount > 0 ? ` (${completedCount}/${log.sets.length})` : ''}</div>
       <div class="ex-name">${ex.name}${ex.altTag ? ` <span class="alt-tag">${ex.altTag}</span>` : ''}</div>
       <div class="ex-muscles">${muscleKeys.map(k =>
         `<span class="pill pill-blue">${TF.i18n.t(k)}</span>`
       ).join('')}</div>
-      <div class="ex-meta">
+      ${isExpanded ? `<div class="ex-meta">
         <span>${ex.sets} ${TF.i18n.t('ex.sets')} · ${ex.repsMin}–${ex.repsMax} ${TF.i18n.t('ex.reps')}</span>
         <span>${TF.i18n.t('ex.rest')} ${ex.rest}s</span>
         <span>RPE ${ex.rpe}</span>
-      </div>
+      </div>` : ''}
     `;
 
     header.appendChild(gifThumb);
     header.appendChild(info);
     card.appendChild(header);
+
+    if (!isExpanded) return card; // collapsed — only show header
 
     // Overload badge
     if (showOverloadBadge) {
@@ -264,6 +277,9 @@ TF.workout = {
     if (ex.handle) equipInfo += `\nHandle: ${ex.handle}`;
     if (ex.pulley) equipInfo += `\nPulley: ${ex.pulley}`;
     if (ex.note) equipInfo += `\nNote: ${ex.note}`;
+    if (ex.equipment && ex.equipment.toLowerCase().includes('dumbbell')) {
+      equipInfo += `\n${TF.i18n.t('ex.per.db.detail')}`;
+    }
     cuesBody.innerHTML = `
       <div class="cues-text">${cues}</div>
       ${equipInfo ? `<div class="cues-equipment">${equipInfo}</div>` : ''}
@@ -287,6 +303,11 @@ TF.workout = {
     card.appendChild(setsContainer);
 
     return card;
+  },
+
+  _toggleExerciseCollapse(exIdx) {
+    this._expandedExIdx = this._expandedExIdx === exIdx ? -1 : exIdx;
+    this._renderSessionScreen();
   },
 
   _buildSetRow(ex, exIdx, setIdx, set) {
@@ -379,9 +400,18 @@ TF.workout = {
     // Reorder exercises if we skipped one
     this._reorderIfSkipped(exIdx);
 
-    // Start rest timer
+    // Auto-advance expand: if all sets done, collapse this and expand next
+    const thisLog = this._session.exerciseLogs[exIdx];
+    if (thisLog.sets.every(s => s.completed)) {
+      const nextIdx = this._session.exerciseLogs.findIndex((l, i) => i > exIdx && !l.sets.every(s => s.completed));
+      this._expandedExIdx = nextIdx >= 0 ? nextIdx : exIdx;
+      this._renderSessionScreen();
+    }
+
+    // Start rest timer — look up exercise by ID from current logs order
     const session = TF.program.getSession(this._session.sessionType);
-    const ex = session.exercises[exIdx];
+    const currentLog = this._session.exerciseLogs[exIdx];
+    const ex = session.exercises.find(e => e.id === currentLog.exerciseId) || session.exercises[exIdx];
     this._startRestTimer(ex.rest, ex.name, exIdx, setIdx);
 
     TF.auth.resetTimer();
@@ -506,27 +536,27 @@ TF.workout = {
   _reorderIfSkipped(completedExIdx) {
     const logs = this._session.exerciseLogs;
 
-    // Check if there are any exercises before completedExIdx with 0 completed sets
+    // Check if any exercise before completedExIdx has zero completed sets
     const hasSkipped = logs.slice(0, completedExIdx).some(log =>
       log.sets.every(s => !s.completed)
     );
     if (!hasSkipped) return;
 
-    // Find the insertion point: right after the last exercise that has at least 1 completed set
+    // Insert right after the last exercise that has at least 1 completed set
     let insertAfter = -1;
     for (let i = 0; i < completedExIdx; i++) {
       if (logs[i].sets.some(s => s.completed)) insertAfter = i;
     }
     const insertAt = insertAfter + 1;
-    if (insertAt === completedExIdx) return; // already in correct position
+    if (insertAt === completedExIdx) return;
 
-    // Move the log
     const [moved] = logs.splice(completedExIdx, 1);
     logs.splice(insertAt, 0, moved);
 
-    // Re-render the exercise cards
-    this._renderSessionScreen();
+    // Keep expanded index pointing at the moved exercise
+    this._expandedExIdx = insertAt;
     TF.data.saveActiveSession(this._session);
+    // Note: _renderSessionScreen is called by the auto-advance block above
   },
 
   // --- Rest Timer ---

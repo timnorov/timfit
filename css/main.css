@@ -642,6 +642,9 @@ a { color: var(--accent); text-decoration: none; }
   box-shadow: var(--shadow);
   overflow: hidden;
 }
+.exercise-card.ex-collapsed { opacity: 0.7; }
+.exercise-card.ex-collapsed .ex-gif-thumb { width: 44px; height: 44px; }
+.exercise-card.ex-collapsed .exercise-card-header { padding: 10px 14px; }
 .exercise-card-header {
   display: flex; align-items: flex-start;
   padding: 14px 14px 10px;

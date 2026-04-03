@@ -112,6 +112,7 @@ TF.workout = {
   },
 
   minimizeWorkout() {
+    this._isTest = false;
     document.getElementById('activeWorkout').classList.add('hidden');
     TF.router.navigate('dashboard');
   },
@@ -710,8 +711,7 @@ TF.workout = {
       countdown.classList.add('urgent');
     }
 
-    // Push notification if app in background
-    TF.notifications.show('TimFit', TF.i18n.t('timer.complete'), 'rest-complete');
+    // SW already handles the scheduled notification — no duplicate needed here
 
     setTimeout(() => {
       this._hideTimerSheet();
@@ -835,9 +835,8 @@ TF.workout = {
     document.getElementById('sessionSummaryModal').classList.add('hidden');
     document.getElementById('activeWorkout').classList.add('hidden');
     this._session = null;
-    TF.app.renderDashboard();
+    TF.router.navigate('dashboard');
     TF.app.showToast(TF.i18n.t('session.saved'));
-    TF.notifications.show('TimFit', TF.i18n.t('session.saved'), 'session-saved');
   },
 
   // --- Elapsed Timer ---

@@ -8,7 +8,6 @@ TF.workout = {
   _sessionStartTime: null,
   _elapsedInterval: null,
   _warmupChecked: [false, false, false],
-  _isTest: false,          // test mode: no data saved
 
   // --- Init ---
   init() {
@@ -78,8 +77,8 @@ TF.workout = {
       prs: []
     };
 
-    // Persist immediately (skip in test mode)
-    if (!this._isTest) TF.data.saveActiveSession(this._session);
+    // Persist immediately
+    TF.data.saveActiveSession(this._session);
     this._sessionStartTime = now;
     this._warmupChecked = [false, false, false];
 
@@ -88,14 +87,6 @@ TF.workout = {
 
     // Start elapsed timer
     this._startElapsedTimer();
-  },
-
-  startTestSession() {
-    this._isTest = true;
-    this.startSession('Push A');
-    // Override title to show TEST indicator
-    const titleEl = document.getElementById('workoutTitle');
-    if (titleEl) titleEl.textContent = '[TEST] ' + titleEl.textContent;
   },
 
   // --- Resume Session ---
@@ -112,15 +103,13 @@ TF.workout = {
   },
 
   minimizeWorkout() {
-    this._isTest = false;
     document.getElementById('activeWorkout').classList.add('hidden');
     TF.router.navigate('dashboard');
   },
 
   discardSession() {
     this._stopTimers();
-    if (!this._isTest) TF.data.clearActiveSession();
-    this._isTest = false;
+    TF.data.clearActiveSession();
     this._session = null;
     document.getElementById('activeWorkout').classList.add('hidden');
     TF.app.renderDashboard();
@@ -777,21 +766,9 @@ TF.workout = {
     this._session.duration = Math.round((now - this._session.startTime) / 1000);
     this._session.totalVolume = this._calculateVolume();
 
-    if (!this._isTest) {
-      TF.data.saveSession(this._session);
-      TF.data.clearActiveSession();
-    }
-    const wasTest = this._isTest;
-    this._isTest = false;
+    TF.data.saveSession(this._session);
+    TF.data.clearActiveSession();
 
-    if (wasTest) {
-      this._stopTimers();
-      this._session = null;
-      document.getElementById('activeWorkout').classList.add('hidden');
-      TF.app.renderDashboard();
-      TF.app.showToast('Test session discarded — no data saved');
-      return;
-    }
     this._showSummary();
   },
 

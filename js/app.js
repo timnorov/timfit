@@ -277,9 +277,6 @@ TF.app = {
           <button class="btn btn-primary btn-full" onclick="TF.workout.startSession('${sessionType}')">
             ${TF.i18n.t('dash.start')}
           </button>
-          <button class="btn btn-secondary btn-full" style="margin-top:8px;font-size:13px;opacity:0.7" onclick="TF.workout.startTestSession()">
-            Test Workout (no data saved)
-          </button>
         </div>
       `;
       container.appendChild(todayCard);

@@ -407,14 +407,17 @@ TF.workout = {
     // Save crash-recovery state
     TF.data.saveActiveSession(this._session);
 
-    // Reorder exercises if we skipped one
-    this._reorderIfSkipped(exIdx);
+    // Reorder exercises if we skipped one — returns updated index of this exercise
+    const newExIdx = this._reorderIfSkipped(exIdx);
 
     // Auto-advance expand: if all sets done, collapse this and expand next
-    const thisLog = this._session.exerciseLogs[exIdx];
+    const thisLog = this._session.exerciseLogs[newExIdx];
     if (thisLog.sets.every(s => s.completed)) {
-      const nextIdx = this._session.exerciseLogs.findIndex((l, i) => i > exIdx && !l.sets.every(s => s.completed));
-      this._expandedExIdx = nextIdx >= 0 ? nextIdx : exIdx;
+      const nextIdx = this._session.exerciseLogs.findIndex((l, i) => i > newExIdx && !l.sets.every(s => s.completed));
+      this._expandedExIdx = nextIdx >= 0 ? nextIdx : newExIdx;
+      this._renderSessionScreen();
+    } else if (newExIdx !== exIdx) {
+      // Reorder happened but exercise not fully done — re-render to fix stale DOM exIdx refs
       this._renderSessionScreen();
     }
 
@@ -550,7 +553,7 @@ TF.workout = {
     const hasSkipped = logs.slice(0, completedExIdx).some(log =>
       log.sets.every(s => !s.completed)
     );
-    if (!hasSkipped) return;
+    if (!hasSkipped) return completedExIdx;
 
     // Insert right after the last exercise that has at least 1 completed set
     let insertAfter = -1;
@@ -558,7 +561,7 @@ TF.workout = {
       if (logs[i].sets.some(s => s.completed)) insertAfter = i;
     }
     const insertAt = insertAfter + 1;
-    if (insertAt === completedExIdx) return;
+    if (insertAt === completedExIdx) return completedExIdx;
 
     const [moved] = logs.splice(completedExIdx, 1);
     logs.splice(insertAt, 0, moved);
@@ -566,7 +569,7 @@ TF.workout = {
     // Keep expanded index pointing at the moved exercise
     this._expandedExIdx = insertAt;
     TF.data.saveActiveSession(this._session);
-    // Note: _renderSessionScreen is called by the auto-advance block above
+    return insertAt;
   },
 
   // --- Rest Timer ---

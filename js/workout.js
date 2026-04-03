@@ -365,7 +365,24 @@ TF.workout = {
   // --- Set completion ---
   _completeSet(exIdx, setIdx) {
     const set = this._session.exerciseLogs[exIdx].sets[setIdx];
-    if (set.completed) return; // Already done
+
+    // Toggle: tap completed set to uncomplete it
+    if (set.completed) {
+      set.completed = false;
+      set.completedAt = null;
+      set.isPR = false;
+      TF.data.saveActiveSession(this._session);
+      const row = document.getElementById(`set-row-${exIdx}-${setIdx}`);
+      if (row) {
+        row.className = 'set-row';
+        const checkBtn = document.getElementById(`check-${exIdx}-${setIdx}`);
+        if (checkBtn) { checkBtn.classList.remove('done'); checkBtn.textContent = ''; }
+        const badge = row.querySelector('.pr-badge');
+        if (badge) badge.remove();
+      }
+      TF.utils.vibrate([20]);
+      return;
+    }
 
     set.completed = true;
     set.completedAt = Date.now();

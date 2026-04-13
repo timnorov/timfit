@@ -11,7 +11,8 @@ TF.data = {
     HEALTH: 'tf_health_data',
     PRS: 'tf_prs',
     PIN: 'tf_pin_hash',
-    LAST_ACTIVE: 'tf_last_active'
+    LAST_ACTIVE: 'tf_last_active',
+    COACHING_NOTES: 'tf_coaching_notes'
   },
 
   _get(key) {
@@ -260,7 +261,8 @@ TF.data = {
       measurements: this.getMeasurements(),
       photos: this.getPhotos(),
       cardio: this.getCardioLogs(),
-      prs: this.getPRs()
+      prs: this.getPRs(),
+      coachingNotes: this.getCoachingNotes()
     };
   },
 
@@ -272,6 +274,24 @@ TF.data = {
     if (data.photos) this._set(this.KEYS.PHOTOS, data.photos);
     if (data.cardio) this._set(this.KEYS.CARDIO, data.cardio);
     if (data.prs) this._set(this.KEYS.PRS, data.prs);
+    if (data.coachingNotes) this._set(this.KEYS.COACHING_NOTES, data.coachingNotes);
+  },
+
+  // --- Coaching Notes ---
+  getCoachingNotes() { return this._get(this.KEYS.COACHING_NOTES) || {}; },
+
+  saveCoachingNote(exerciseId, note) {
+    const notes = this.getCoachingNotes();
+    if (note === '' || note == null) {
+      delete notes[exerciseId];
+    } else {
+      notes[exerciseId] = String(note).slice(0, 500);
+    }
+    this._set(this.KEYS.COACHING_NOTES, notes);
+  },
+
+  getCoachingNote(exerciseId) {
+    return (this.getCoachingNotes())[exerciseId] || '';
   },
 
   resetAll() {

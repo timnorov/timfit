@@ -15,6 +15,11 @@ TF.app = {
       window.history.replaceState({}, '', window.location.pathname);
     }
 
+    // Lock to portrait orientation
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('portrait').catch(() => {});
+    }
+
     // Apply theme early to prevent flash
     TF.settings.applyThemeFromProfile();
 
@@ -73,8 +78,15 @@ TF.app = {
       this._showResumeBanner(active);
     }
 
-    // Request notification permission on first use
-    TF.notifications.requestPermission();
+    // Request notification permission on first use, then check reminders
+    TF.notifications.requestPermission().then(() => {
+      TF.notifications.checkReminders();
+    });
+
+    // Check reminders each time app comes to foreground
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) TF.notifications.checkReminders();
+    });
 
     // Render initial view
     this.renderDashboard();

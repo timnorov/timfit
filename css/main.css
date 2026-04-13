@@ -678,6 +678,15 @@ a { color: var(--accent); text-decoration: none; }
   display: flex; align-items: center; gap: 6px;
 }
 
+/* Coaching note */
+.coaching-note {
+  margin: 0 14px 8px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
 /* Cues accordion */
 .cues-toggle {
   display: flex; align-items: center; justify-content: space-between;

@@ -87,6 +87,14 @@ TF.settings = {
         ${this._toggleRow('settings.notif.weekly', 'notifWeekly', profile.notifWeekly)}
       </div>
 
+      <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;padding-right:16px">
+        <h2 class="section-title">${lang === 'ru' ? 'Заметки тренера' : 'Coaching Notes'}</h2>
+        <span style="font-size:13px;color:var(--text3)">${lang === 'ru' ? 'Нажмите, чтобы изменить' : 'Tap to edit'}</span>
+      </div>
+      <div class="settings-group" style="margin:0 16px 12px" id="coachingNotesList">
+        ${this._buildCoachingNotesList(lang)}
+      </div>
+
       <div class="section-header">
         <h2 class="section-title">${TF.i18n.t('settings.rest.defaults')}</h2>
       </div>
@@ -121,7 +129,7 @@ TF.settings = {
       </div>
 
       <div class="settings-group" style="margin:0 16px 12px">
-        ${this._settingsRow('settings.version', '<span class="settings-row-value">1.3.9 (3 Apr)</span>')}
+        ${this._settingsRow('settings.version', '<span class="settings-row-value">1.4.0 (13 Apr)</span>')}
         ${this._settingsRow('settings.program.start', `<span class="settings-row-value">${programStart}</span>`)}
         ${this._settingsRow('settings.days.training', `<span class="settings-row-value">${daysTraining}</span>`)}
       </div>
@@ -343,6 +351,66 @@ TF.settings = {
     if (!confirm(TF.i18n.t('settings.reset.confirm2'))) return;
     TF.data.resetAll();
     location.reload();
+  },
+
+  _buildCoachingNotesList(lang) {
+    const allExercises = Object.values(TF.PROGRAM)
+      .flatMap(s => s.exercises || [])
+      .filter((e, i, arr) => arr.findIndex(x => x.id === e.id) === i)
+      .sort((a, b) => a.name.localeCompare(b.name));
+    const notes = TF.data.getCoachingNotes();
+    return allExercises.map(ex => {
+      const note = notes[ex.id] || '';
+      return `
+        <div class="settings-row" onclick="TF.settings._editCoachingNote('${ex.id}', '${ex.name.replace(/'/g, "\\'")}')">
+          <span class="settings-row-label" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ex.name}</span>
+          <span class="settings-row-value" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:${note ? 'var(--accent)' : 'var(--text3)'}">${note || (lang === 'ru' ? 'Нет заметки' : 'No note')}</span>
+          <span class="settings-row-arrow">›</span>
+        </div>`;
+    }).join('');
+  },
+
+  _editCoachingNote(exerciseId, exerciseName) {
+    const lang = TF.i18n.getLang();
+    const current = TF.data.getCoachingNote(exerciseId);
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:700;display:flex;align-items:flex-end';
+    modal.innerHTML = `
+      <div style="background:var(--bg-modal);border-radius:20px 20px 0 0;padding:20px 20px calc(var(--safe-bottom)+20px);width:100%;box-sizing:border-box">
+        <h3 style="font-size:17px;font-weight:700;margin-bottom:4px">${exerciseName}</h3>
+        <p style="font-size:13px;color:var(--text3);margin-bottom:12px">${lang === 'ru' ? 'Персональная заметка для этого упражнения' : 'Personal note for this exercise'}</p>
+        <textarea id="coachingNoteInput" class="form-input" maxlength="500"
+          style="width:100%;min-height:100px;resize:vertical;font-size:15px;box-sizing:border-box"
+          placeholder="${lang === 'ru' ? 'Введите заметку...' : 'Enter note...'}">${current}</textarea>
+        <div style="font-size:12px;color:var(--text3);text-align:right;margin-bottom:12px" id="noteCharCount">${current.length}/500</div>
+        <button class="btn btn-primary btn-full" onclick="TF.settings._saveCoachingNote('${exerciseId}', this.closest('[style]'))">${lang === 'ru' ? 'Сохранить' : 'Save'}</button>
+        <button class="btn btn-ghost btn-full" style="margin-top:8px;color:var(--red)" onclick="TF.settings._clearCoachingNote('${exerciseId}', this.closest('[style]'))">${lang === 'ru' ? 'Очистить заметку' : 'Clear note'}</button>
+        <button class="btn btn-ghost btn-full" style="margin-top:4px" onclick="this.closest('[style]').remove()">Cancel</button>
+      </div>
+    `;
+    // Char count update
+    modal.querySelector('#coachingNoteInput').addEventListener('input', function() {
+      modal.querySelector('#noteCharCount').textContent = this.value.length + '/500';
+    });
+    document.body.appendChild(modal);
+  },
+
+  _saveCoachingNote(exerciseId, modal) {
+    const val = document.getElementById('coachingNoteInput').value.trim();
+    TF.data.saveCoachingNote(exerciseId, val);
+    modal.remove();
+    const lang = TF.i18n.getLang();
+    const list = document.getElementById('coachingNotesList');
+    if (list) list.innerHTML = this._buildCoachingNotesList(lang);
+    TF.app.showToast(lang === 'ru' ? 'Заметка сохранена' : 'Note saved');
+  },
+
+  _clearCoachingNote(exerciseId, modal) {
+    TF.data.saveCoachingNote(exerciseId, '');
+    modal.remove();
+    const lang = TF.i18n.getLang();
+    const list = document.getElementById('coachingNotesList');
+    if (list) list.innerHTML = this._buildCoachingNotesList(lang);
   },
 
   applyThemeFromProfile() {

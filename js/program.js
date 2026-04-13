@@ -591,15 +591,16 @@ TF.PROGRAM = {
         startingWeight: 30
       },
       {
-        id: 'back_extension',
-        name: 'Back Extension / Hyperextension',
-        gif: 'assets/gifs/back_extension.png',
-        muscles: ['Hamstrings', 'Glutes', 'Spinal Erectors'],
-        muscleKeys: ['muscle.hamstrings', 'muscle.glutes'],
-        sets: 3, repsMin: 12, repsMax: 15, rest: 90, rpe: '7',
-        equipment: 'GHD or back extension bench + weight plate',
-        cuesEn: 'Hips at pad EDGE, feet secured. Hold plate across chest once bodyweight is easy. Start in deep hip hinge. Extend until body is NEUTRAL — do NOT hyperextend. 3-sec descent. Feel hamstring stretch at bottom.',
-        cuesRu: 'Бёдра у КРАЯ подушки, ноги зафиксированы. Держите блин на груди, когда с весом тела станет легко. Начинайте с глубокого наклона в тазобедренном суставе. Разгибайтесь до НЕЙТРАЛЬНОГО положения тела — НЕ переразгибайтесь. Опуск 3 секунды. Ощущайте растяжение бицепса бедра внизу.',
+        id: 'lying_hip_extension',
+        name: 'Lying Hip Extension',
+        gif: 'assets/gifs/lying_hip_extension.gif',
+        muscles: ['Glutes', 'Hamstrings', 'Spinal Erectors'],
+        muscleKeys: ['muscle.glutes', 'muscle.hamstrings'],
+        sets: 3, repsMin: 12, repsMax: 15, rest: 90, rpe: '6–7',
+        equipment: 'Mat',
+        grip: 'Hands folded under forehead, face down',
+        cuesEn: 'Lie face down on a mat, hands under your forehead, forehead resting on hands. Legs straight. Lift ONE leg approximately 20cm off the floor — keep the leg straight, do NOT bend the knee. Squeeze the glute hard at the top. Hold 2 seconds at peak. Lower slowly — 2-sec descent. Do NOT hyperextend the lower back — the lift is small and controlled. Zero spinal compression — pure posterior chain activation. Alternate legs each rep or complete all reps on one side then switch.',
+        cuesRu: 'Лягте лицом вниз на коврик, руки сложены под лбом, лоб опирается на руки. Ноги прямые. Поднимите ОДНУ ногу примерно на 20 см от пола — держите ногу прямой, НЕ сгибайте колено. Сильно сожмите ягодицу в верхней точке. Задержитесь 2 секунды на пике. Опускайте медленно — опуск 2 секунды. НЕ прогибайте поясницу — подъём небольшой и контролируемый. Нулевая нагрузка на позвоночник — чистая активация задней цепи. Чередуйте ноги в каждом повторении или выполните все повторения на одну сторону, затем смените.',
         startingWeight: 0
       },
       {
@@ -627,15 +628,15 @@ TF.PROGRAM = {
         startingWeight: 40
       },
       {
-        id: 'ab_wheel_rollout',
-        name: 'Ab Wheel Rollout',
-        gif: 'assets/gifs/ab_wheel_rollout.png',
-        muscles: ['Rectus Abdominis', 'Obliques', 'Hip Flexors', 'Lats'],
-        muscleKeys: ['muscle.core', 'muscle.lats'],
-        sets: 3, repsMin: 8, repsMax: 12, rest: 60, rpe: '8',
-        equipment: 'Ab wheel + mat',
-        cuesEn: 'Kneel on mat, ab wheel directly below shoulders. EXHALE and brace your core hard before rolling out. Roll forward slowly — hips stay in a STRAIGHT LINE with torso, do NOT let hips drop or lower back hyperextend — this is the most common injury point. Go only as far as you can control with a neutral spine. Pause 1 sec at full extension. Pull back using ONLY your abs — imagine pulling your belly button to your spine. Start with PARTIAL range and build to full extension over weeks — do not force range.',
-        cuesRu: 'Встаньте на колени на коврик, колесо прямо под плечами. ВЫДОХНИТЕ и сильно зафиксируйте корпус перед началом движения. Медленно катите вперёд — бёдра остаются на ОДНОЙ ЛИНИИ с торсом, НЕ позволяйте бёдрам проваливаться или пояснице прогибаться — это самая частая точка травмы. Катитесь только настолько далеко, насколько можете контролировать нейтральное положение позвоночника. Пауза 1 секунда в крайней точке. Возвращайтесь, используя ТОЛЬКО пресс — представьте, что тянете пупок к позвоночнику. Начинайте с ЧАСТИЧНОЙ амплитуды и постепенно увеличивайте до полной — не форсируйте.',
+        id: 'dead_bug',
+        name: 'Dead Bug',
+        gif: 'assets/gifs/dead_bug.gif',
+        muscles: ['Rectus Abdominis', 'Transverse Abdominis', 'Hip Flexors'],
+        muscleKeys: ['muscle.core'],
+        sets: 3, repsMin: 8, repsMax: 8, rest: 60, rpe: '6',
+        equipment: 'Mat',
+        cuesEn: 'Lie on your back, arms extended straight toward ceiling, knees bent at 90° directly above hips — like a dead bug on its back. Press your lower back FLAT into the mat — this is the most important cue. Maintain this flat back throughout the entire set. Simultaneously lower your RIGHT arm toward the floor behind your head AND extend your LEFT leg straight toward the floor. Stop just before either touches the floor. Return to start. Then switch — LEFT arm + RIGHT leg. That is one full rep per side. Move SLOWLY — 3 seconds down, 3 seconds back. If your lower back lifts off the mat, reduce range of motion. Zero momentum. This directly corrects anterior pelvic tilt.',
+        cuesRu: 'Лягте на спину, руки вытянуты прямо к потолку, колени согнуты под 90° прямо над бёдрами — как мёртвый жук на спине. Прижмите поясницу ПЛОТНО к коврику — это самая важная подсказка. Сохраняйте это положение на протяжении всего подхода. Одновременно опустите ПРАВУЮ руку к полу за головой И вытяните ЛЕВУЮ ногу прямо к полу. Остановитесь, не касаясь пола. Вернитесь в исходное положение. Затем смените — ЛЕВАЯ рука + ПРАВАЯ нога. Это одно полное повторение на каждую сторону. Двигайтесь МЕДЛЕННО — 3 секунды вниз, 3 секунды обратно. Если поясница отрывается от коврика, уменьшите амплитуду. Нулевая инерция. Непосредственно исправляет передний наклон таза.',
         startingWeight: 0
       }
     ]

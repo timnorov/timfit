@@ -543,7 +543,10 @@ TF.settings = {
       if (matched && matched.length > 0) {
         return { status: 'ok', pastedName: name, note, exercises: matched };
       }
-      if (ambiguous) return { status: 'ambiguous', pastedName: name, note, candidates };
+      // Ambiguous = multiple different exercises matched — apply to ALL of them
+      if (ambiguous && candidates.length > 0) {
+        return { status: 'ok', pastedName: name, note, exercises: candidates, multiMatch: true };
+      }
       return { status: 'none', pastedName: name, note };
     });
   },
@@ -576,9 +579,12 @@ TF.settings = {
     results.forEach((r, i) => {
       const border = i < results.length - 1 ? 'border-bottom:1px solid var(--border)' : '';
       if (r.status === 'ok') {
+        const exLabel = r.multiMatch
+          ? r.exercises.map(e => e.name).join(' + ')
+          : r.exercises[0].name;
         html += `<div style="padding:10px 12px;${border}">
           <span style="color:var(--green);font-weight:700">✅</span>
-          <span style="font-size:13px;color:var(--text1);margin-left:6px"><strong>${this._escHtml(r.exercises[0].name)}</strong></span>
+          <span style="font-size:13px;color:var(--text1);margin-left:6px"><strong>${this._escHtml(exLabel)}</strong></span>
           <div style="font-size:12px;color:var(--text3);margin-left:22px;margin-top:2px">${this._escHtml(r.note.slice(0, 80))}${r.note.length > 80 ? '…' : ''}</div>
         </div>`;
       } else if (r.status === 'ambiguous') {

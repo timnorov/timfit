@@ -1487,3 +1487,25 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .lib-card-arrow {
   font-size: 20px; color: var(--text3); flex-shrink: 0;
 }
+
+
+/* Portrait-only lock — covers screen in landscape with a message */
+#portraitOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #000;
+  color: #fff;
+  z-index: 99999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+}
+#portraitOverlay .portrait-icon { font-size: 48px; }
+#portraitOverlay .portrait-msg { font-size: 17px; font-weight: 600; }
+
+@media screen and (orientation: landscape) {
+  #portraitOverlay { display: flex; }
+}

@@ -87,17 +87,13 @@ TF.settings = {
         ${this._toggleRow('settings.notif.weekly', 'notifWeekly', profile.notifWeekly)}
       </div>
 
-      <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;padding-right:16px">
+      <div class="section-header">
         <h2 class="section-title">${lang === 'ru' ? 'Заметки тренера' : 'Coaching Notes'}</h2>
-        <span style="font-size:13px;color:var(--text3)">${lang === 'ru' ? 'Нажмите, чтобы изменить' : 'Tap to edit'}</span>
       </div>
-      <div style="margin:0 16px 8px">
+      <div style="margin:0 16px 12px">
         <button class="btn btn-secondary btn-full" onclick="TF.settings._openBulkImport()">
           ${lang === 'ru' ? '📋 Импортировать заметки из текста' : '📋 Import Notes from Text'}
         </button>
-      </div>
-      <div class="settings-group" style="margin:0 16px 12px" id="coachingNotesList">
-        ${this._buildCoachingNotesList(lang)}
       </div>
 
       <div class="section-header">
@@ -406,17 +402,12 @@ TF.settings = {
     TF.data.saveCoachingNote(exerciseId, val);
     modal.remove();
     const lang = TF.i18n.getLang();
-    const list = document.getElementById('coachingNotesList');
-    if (list) list.innerHTML = this._buildCoachingNotesList(lang);
     TF.app.showToast(lang === 'ru' ? 'Заметка сохранена' : 'Note saved');
   },
 
   _clearCoachingNote(exerciseId, modal) {
     TF.data.saveCoachingNote(exerciseId, '');
     modal.remove();
-    const lang = TF.i18n.getLang();
-    const list = document.getElementById('coachingNotesList');
-    if (list) list.innerHTML = this._buildCoachingNotesList(lang);
   },
 
   // ---------------------------------------------------------------
@@ -457,32 +448,40 @@ TF.settings = {
     document.body.appendChild(modal);
   },
 
-  // --- Parse raw text into {line, note} pairs ---
-  // Groups non-blank lines into paragraphs; first line = name candidate, rest = note.
+  // --- Parse raw text into {name, note} pairs ---
+  // Line-by-line: skip session headers and blank lines individually,
+  // then treat the next line as an exercise name and collect following
+  // non-blank lines as its note until the next blank line or header.
   _parseBulkText(text) {
     const SESSION_HEADERS = new Set(['push a','pull a','legs a','push b','pull b','legs b','rest']);
     const lines = text.split('\n').map(l => l.trim());
-    const paragraphs = [];
-    let current = [];
-
-    for (const line of lines) {
-      if (line === '') {
-        if (current.length) { paragraphs.push(current); current = []; }
-      } else {
-        current.push(line);
-      }
-    }
-    if (current.length) paragraphs.push(current);
-
     const entries = [];
-    for (const para of paragraphs) {
-      const nameLine = para[0];
-      const noteLines = para.slice(1);
-      // Skip session-type headers (PUSH A, LEGS B, etc.)
-      if (SESSION_HEADERS.has(nameLine.toLowerCase())) continue;
-      // If there's no note line, treat as standalone name; skip
-      if (noteLines.length === 0) continue;
-      entries.push({ name: nameLine, note: noteLines.join('\n').trim() });
+    let i = 0;
+
+    while (i < lines.length) {
+      const line = lines[i];
+
+      // Skip blank lines and session-type headers
+      if (!line || SESSION_HEADERS.has(line.toLowerCase())) {
+        i++;
+        continue;
+      }
+
+      // This line is a potential exercise name — collect note lines that follow
+      const nameLine = line;
+      const noteLines = [];
+      i++;
+
+      while (i < lines.length) {
+        const next = lines[i];
+        if (!next || SESSION_HEADERS.has(next.toLowerCase())) break;
+        noteLines.push(next);
+        i++;
+      }
+
+      if (noteLines.length > 0) {
+        entries.push({ name: nameLine, note: noteLines.join('\n').trim() });
+      }
     }
     return entries;
   },
@@ -614,10 +613,6 @@ TF.settings = {
     });
 
     modal.remove();
-
-    // Refresh list
-    const list = document.getElementById('coachingNotesList');
-    if (list) list.innerHTML = this._buildCoachingNotesList(lang);
 
     const msg = lang === 'ru'
       ? `✅ ${toImport.length} заметок успешно импортированы.`

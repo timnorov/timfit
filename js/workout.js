@@ -650,49 +650,70 @@ TF.workout = {
   },
 
   _arcTimerRAF: null,
+  _arcTarget: null,  // { startTime, endTime, nextExIdx, nextSetIdx }
+
   _startArcTimer(seconds, completedExIdx, completedSetIdx) {
-    // Cancel any existing arc timer
     if (this._arcTimerRAF) {
       cancelAnimationFrame(this._arcTimerRAF);
       this._arcTimerRAF = null;
     }
-    // Remove timing class from all buttons
     document.querySelectorAll('.set-check-btn.timing').forEach(b => {
       b.classList.remove('timing');
       b.style.removeProperty('--arc');
     });
 
-    // Find next uncompleted set button
-    let nextBtn = null;
+    // Find indices of the next uncompleted set — store indices, NOT a DOM ref
+    let nextExIdx = -1, nextSetIdx = -1;
     const logs = this._session.exerciseLogs;
-    for (let ei = completedExIdx; ei < logs.length; ei++) {
+    outer: for (let ei = completedExIdx; ei < logs.length; ei++) {
       const startSi = ei === completedExIdx ? completedSetIdx + 1 : 0;
       for (let si = startSi; si < logs[ei].sets.length; si++) {
         if (!logs[ei].sets[si].completed) {
-          nextBtn = document.getElementById(`check-${ei}-${si}`);
-          break;
+          nextExIdx = ei; nextSetIdx = si;
+          break outer;
         }
       }
-      if (nextBtn) break;
     }
-    if (!nextBtn) return;
+    if (nextExIdx < 0) { this._arcTarget = null; return; }
 
-    nextBtn.classList.add('timing');
-    const start = Date.now();
-    const duration = seconds * 1000;
-
-    const tick = () => {
-      const pct = Math.min((Date.now() - start) / duration * 100, 100);
-      nextBtn.style.setProperty('--arc', `${pct}%`);
-      if (pct < 100 && this._timerRunning) {
-        this._arcTimerRAF = requestAnimationFrame(tick);
-      } else {
-        nextBtn.classList.remove('timing');
-        nextBtn.style.removeProperty('--arc');
-        this._arcTimerRAF = null;
-      }
+    this._arcTarget = {
+      startTime: Date.now(),
+      endTime: Date.now() + seconds * 1000,
+      nextExIdx,
+      nextSetIdx
     };
-    this._arcTimerRAF = requestAnimationFrame(tick);
+    this._tickArc();
+  },
+
+  _tickArc() {
+    if (!this._arcTarget || !this._timerRunning) {
+      this._arcTarget = null;
+      return;
+    }
+    const { startTime, endTime, nextExIdx, nextSetIdx } = this._arcTarget;
+    const pct = Math.min((Date.now() - startTime) / (endTime - startTime) * 100, 100);
+
+    // Re-find the button by ID every frame — survives DOM rebuilds
+    const btn = document.getElementById(`check-${nextExIdx}-${nextSetIdx}`);
+
+    // Clear stale timing classes from any other buttons
+    document.querySelectorAll('.set-check-btn.timing').forEach(b => {
+      if (b !== btn) { b.classList.remove('timing'); b.style.removeProperty('--arc'); }
+    });
+
+    if (btn) {
+      btn.classList.add('timing');
+      btn.style.setProperty('--arc', `${pct}%`);
+    }
+
+    if (pct >= 100) {
+      if (btn) { btn.classList.remove('timing'); btn.style.removeProperty('--arc'); }
+      this._arcTarget = null;
+      this._arcTimerRAF = null;
+      return;
+    }
+
+    this._arcTimerRAF = requestAnimationFrame(() => this._tickArc());
   },
 
   _showTimerSheet() {
@@ -714,6 +735,7 @@ TF.workout = {
   skipTimer() {
     this._timerWorker.postMessage({ type: 'STOP' });
     this._timerRunning = false;
+    this._arcTarget = null;
     localStorage.removeItem('tf_active_timer');
     this._hideTimerSheet();
     this._hideMiniTimer();
@@ -935,6 +957,7 @@ TF.workout = {
     clearInterval(this._inactivityInterval);
     this._timerWorker.postMessage({ type: 'STOP' });
     this._timerRunning = false;
+    this._arcTarget = null;
     localStorage.removeItem('tf_active_timer');
     this._hideTimerSheet();
     this._hideMiniTimer();

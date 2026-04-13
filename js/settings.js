@@ -449,40 +449,42 @@ TF.settings = {
   },
 
   // --- Parse raw text into {name, note} pairs ---
-  // Line-by-line: skip session headers and blank lines individually,
-  // then treat the next line as an exercise name and collect following
-  // non-blank lines as its note until the next blank line or header.
+  // Uses the fuzzy matcher to identify exercise name lines vs note lines.
+  // A line is an exercise name if it matches (or is ambiguous against) a known
+  // exercise — otherwise it's a note line for the previous exercise.
+  // Works with or without blank lines between entries.
   _parseBulkText(text) {
     const SESSION_HEADERS = new Set(['push a','pull a','legs a','push b','pull b','legs b','rest']);
-    const lines = text.split('\n').map(l => l.trim());
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
     const entries = [];
-    let i = 0;
+    let currentName = null;
+    let currentNoteLines = [];
 
-    while (i < lines.length) {
-      const line = lines[i];
+    for (const line of lines) {
+      if (SESSION_HEADERS.has(line.toLowerCase())) continue;
 
-      // Skip blank lines and session-type headers
-      if (!line || SESSION_HEADERS.has(line.toLowerCase())) {
-        i++;
-        continue;
-      }
+      const { matched, ambiguous } = this._fuzzyMatch(line);
+      const isExerciseName = (matched && matched.length > 0) || ambiguous;
 
-      // This line is a potential exercise name — collect note lines that follow
-      const nameLine = line;
-      const noteLines = [];
-      i++;
-
-      while (i < lines.length) {
-        const next = lines[i];
-        if (!next || SESSION_HEADERS.has(next.toLowerCase())) break;
-        noteLines.push(next);
-        i++;
-      }
-
-      if (noteLines.length > 0) {
-        entries.push({ name: nameLine, note: noteLines.join('\n').trim() });
+      if (isExerciseName) {
+        // Save previous entry
+        if (currentName && currentNoteLines.length > 0) {
+          entries.push({ name: currentName, note: currentNoteLines.join('\n').trim() });
+        }
+        currentName = line;
+        currentNoteLines = [];
+      } else {
+        // Note line for current exercise
+        if (currentName) currentNoteLines.push(line);
       }
     }
+
+    // Save last entry
+    if (currentName && currentNoteLines.length > 0) {
+      entries.push({ name: currentName, note: currentNoteLines.join('\n').trim() });
+    }
+
     return entries;
   },
 

@@ -91,6 +91,11 @@ TF.settings = {
         <h2 class="section-title">${lang === 'ru' ? 'Заметки тренера' : 'Coaching Notes'}</h2>
         <span style="font-size:13px;color:var(--text3)">${lang === 'ru' ? 'Нажмите, чтобы изменить' : 'Tap to edit'}</span>
       </div>
+      <div style="margin:0 16px 8px">
+        <button class="btn btn-secondary btn-full" onclick="TF.settings._openBulkImport()">
+          ${lang === 'ru' ? '📋 Импортировать заметки из текста' : '📋 Import Notes from Text'}
+        </button>
+      </div>
       <div class="settings-group" style="margin:0 16px 12px" id="coachingNotesList">
         ${this._buildCoachingNotesList(lang)}
       </div>
@@ -411,6 +416,219 @@ TF.settings = {
     const lang = TF.i18n.getLang();
     const list = document.getElementById('coachingNotesList');
     if (list) list.innerHTML = this._buildCoachingNotesList(lang);
+  },
+
+  // ---------------------------------------------------------------
+  // Bulk coaching notes import
+  // ---------------------------------------------------------------
+
+  _openBulkImport() {
+    const lang = TF.i18n.getLang();
+    const ph = lang === 'ru'
+      ? 'Вставьте заметки тренера. Используйте название упражнения как заголовок, затем заметку на следующей строке.'
+      : 'Paste your coaching notes here. Use exercise name as header followed by the note on the next line.';
+
+    const modal = document.createElement('div');
+    modal.id = 'bulkImportModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:800;display:flex;align-items:flex-end';
+    modal.innerHTML = `
+      <div style="background:var(--bg-modal);border-radius:20px 20px 0 0;padding:20px 20px calc(var(--safe-bottom)+20px);width:100%;box-sizing:border-box;max-height:90vh;overflow-y:auto">
+        <h3 style="font-size:17px;font-weight:700;margin-bottom:12px">
+          ${lang === 'ru' ? '📋 Импортировать заметки' : '📋 Import Notes from Text'}
+        </h3>
+        <textarea id="bulkImportText" class="form-input"
+          style="width:100%;min-height:180px;resize:vertical;font-size:14px;font-family:monospace;box-sizing:border-box;margin-bottom:12px"
+          placeholder="${ph}"></textarea>
+        <div id="bulkPreviewArea" style="margin-bottom:12px"></div>
+        <button class="btn btn-secondary btn-full" style="margin-bottom:8px"
+                onclick="TF.settings._previewBulkImport()">
+          ${lang === 'ru' ? 'Предпросмотр' : 'Preview'}
+        </button>
+        <button class="btn btn-primary btn-full" id="bulkImportConfirmBtn" style="margin-bottom:8px;display:none"
+                onclick="TF.settings._confirmBulkImport()">
+          ${lang === 'ru' ? 'Импортировать' : 'Import'}
+        </button>
+        <button class="btn btn-ghost btn-full" onclick="document.getElementById('bulkImportModal').remove()">
+          Cancel
+        </button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  },
+
+  // --- Parse raw text into {line, note} pairs ---
+  // Groups non-blank lines into paragraphs; first line = name candidate, rest = note.
+  _parseBulkText(text) {
+    const SESSION_HEADERS = new Set(['push a','pull a','legs a','push b','pull b','legs b','rest']);
+    const lines = text.split('\n').map(l => l.trim());
+    const paragraphs = [];
+    let current = [];
+
+    for (const line of lines) {
+      if (line === '') {
+        if (current.length) { paragraphs.push(current); current = []; }
+      } else {
+        current.push(line);
+      }
+    }
+    if (current.length) paragraphs.push(current);
+
+    const entries = [];
+    for (const para of paragraphs) {
+      const nameLine = para[0];
+      const noteLines = para.slice(1);
+      // Skip session-type headers (PUSH A, LEGS B, etc.)
+      if (SESSION_HEADERS.has(nameLine.toLowerCase())) continue;
+      // If there's no note line, treat as standalone name; skip
+      if (noteLines.length === 0) continue;
+      entries.push({ name: nameLine, note: noteLines.join('\n').trim() });
+    }
+    return entries;
+  },
+
+  // --- Fuzzy match a pasted name against all known exercises ---
+  // Returns { matched: Exercise[]|null, ambiguous: boolean, candidates: Exercise[] }
+  // matched is an array to support same-name exercises (e.g. Cable Face Pull ×3 sessions).
+  _fuzzyMatch(pastedName) {
+    const allExercises = Object.values(TF.PROGRAM)
+      .flatMap(s => s.exercises || [])
+      .filter((e, i, arr) => arr.findIndex(x => x.id === e.id) === i);
+
+    const q = pastedName.toLowerCase().trim();
+
+    // Helper: check if a set of matches share the same display name.
+    // Same-name duplicates (same exercise in different sessions) are treated as one match.
+    const groupByName = (list) => {
+      const names = [...new Set(list.map(e => e.name.toLowerCase()))];
+      return names.length; // 1 = all same name, >1 = genuinely ambiguous
+    };
+
+    // 1. Exact match
+    const exact = allExercises.filter(e => e.name.toLowerCase() === q);
+    if (exact.length >= 1) return { matched: exact, ambiguous: false, candidates: exact };
+
+    // 2. Contains match — q is contained within exercise name
+    const contains = allExercises.filter(e => e.name.toLowerCase().includes(q));
+    if (contains.length >= 1) {
+      if (groupByName(contains) === 1) return { matched: contains, ambiguous: false, candidates: contains };
+      return { matched: null, ambiguous: true, candidates: contains };
+    }
+
+    // 3. Partial word match — check how many words of q appear in the exercise name
+    const qWords = q.split(/\s+/).filter(w => w.length > 1);
+    if (qWords.length === 0) return { matched: null, ambiguous: false, candidates: [] };
+
+    const scored = allExercises.map(e => {
+      const eName = e.name.toLowerCase();
+      const matchCount = qWords.filter(w => eName.includes(w)).length;
+      return { ex: e, score: matchCount / qWords.length };
+    }).filter(s => s.score >= 0.5).sort((a, b) => b.score - a.score);
+
+    if (scored.length === 0) return { matched: null, ambiguous: false, candidates: [] };
+
+    const best = scored[0].score;
+    const topTier = scored.filter(s => s.score === best).map(s => s.ex);
+    if (groupByName(topTier) === 1) return { matched: topTier, ambiguous: false, candidates: topTier };
+    return { matched: null, ambiguous: true, candidates: topTier };
+  },
+
+  // --- Build matched results array from parsed entries ---
+  _buildMatchResults(entries) {
+    return entries.map(({ name, note }) => {
+      const { matched, ambiguous, candidates } = this._fuzzyMatch(name);
+      // matched is an array of exercises (same-name group) or null
+      if (matched && matched.length > 0) {
+        return { status: 'ok', pastedName: name, note, exercises: matched };
+      }
+      if (ambiguous) return { status: 'ambiguous', pastedName: name, note, candidates };
+      return { status: 'none', pastedName: name, note };
+    });
+  },
+
+  _previewBulkImport() {
+    const lang = TF.i18n.getLang();
+    const text = document.getElementById('bulkImportText').value;
+    const entries = this._parseBulkText(text);
+    const area = document.getElementById('bulkPreviewArea');
+
+    if (entries.length === 0) {
+      area.innerHTML = `<p style="font-size:14px;color:var(--text3);margin:0">${lang === 'ru' ? 'Ничего не найдено для разбора.' : 'Nothing found to parse.'}</p>`;
+      document.getElementById('bulkImportConfirmBtn').style.display = 'none';
+      return;
+    }
+
+    const results = this._buildMatchResults(entries);
+    // Store on the modal element for confirm step
+    document.getElementById('bulkImportModal')._matchResults = results;
+
+    const okCount = results.filter(r => r.status === 'ok').length;
+
+    let html = `<div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px">${
+      lang === 'ru'
+        ? `Найдено совпадений: ${okCount} из ${entries.length}`
+        : `Matched ${okCount} of ${entries.length} entries`
+    }</div>`;
+
+    html += `<div style="background:var(--bg-card);border-radius:10px;overflow:hidden">`;
+    results.forEach((r, i) => {
+      const border = i < results.length - 1 ? 'border-bottom:1px solid var(--border)' : '';
+      if (r.status === 'ok') {
+        html += `<div style="padding:10px 12px;${border}">
+          <span style="color:var(--green);font-weight:700">✅</span>
+          <span style="font-size:13px;color:var(--text1);margin-left:6px"><strong>${this._escHtml(r.exercises[0].name)}</strong></span>
+          <div style="font-size:12px;color:var(--text3);margin-left:22px;margin-top:2px">${this._escHtml(r.note.slice(0, 80))}${r.note.length > 80 ? '…' : ''}</div>
+        </div>`;
+      } else if (r.status === 'ambiguous') {
+        const names = r.candidates.map(c => c.name).join(', ');
+        html += `<div style="padding:10px 12px;${border}">
+          <span style="color:#FF9500;font-weight:700">⚠️</span>
+          <span style="font-size:13px;color:var(--text2);margin-left:6px">"${this._escHtml(r.pastedName)}"</span>
+          <div style="font-size:12px;color:var(--text3);margin-left:22px;margin-top:2px">${lang === 'ru' ? 'Несколько совпадений, пропущено' : 'Multiple matches, skipped'}: ${this._escHtml(names)}</div>
+        </div>`;
+      } else {
+        html += `<div style="padding:10px 12px;${border}">
+          <span style="color:var(--red);font-weight:700">❌</span>
+          <span style="font-size:13px;color:var(--text2);margin-left:6px">"${this._escHtml(r.pastedName)}"</span>
+          <div style="font-size:12px;color:var(--text3);margin-left:22px;margin-top:2px">${lang === 'ru' ? 'Совпадений не найдено, пропущено' : 'No match found, skipped'}</div>
+        </div>`;
+      }
+    });
+    html += `</div>`;
+
+    area.innerHTML = html;
+    document.getElementById('bulkImportConfirmBtn').style.display = okCount > 0 ? 'block' : 'none';
+  },
+
+  _confirmBulkImport() {
+    const lang = TF.i18n.getLang();
+    const modal = document.getElementById('bulkImportModal');
+    const results = modal._matchResults;
+    if (!results) return;
+
+    const toImport = results.filter(r => r.status === 'ok');
+    toImport.forEach(r => {
+      // Save note to all matched exercises (handles same-name duplicates like Cable Face Pull)
+      r.exercises.forEach(ex => TF.data.saveCoachingNote(ex.id, r.note));
+    });
+
+    modal.remove();
+
+    // Refresh list
+    const list = document.getElementById('coachingNotesList');
+    if (list) list.innerHTML = this._buildCoachingNotesList(lang);
+
+    const msg = lang === 'ru'
+      ? `✅ ${toImport.length} заметок успешно импортированы.`
+      : `✅ ${toImport.length} note${toImport.length !== 1 ? 's' : ''} imported successfully.`;
+    TF.app.showToast(msg);
+  },
+
+  _escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   },
 
   applyThemeFromProfile() {

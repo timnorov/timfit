@@ -361,6 +361,7 @@ TF.settings = {
   _buildCoachingNotesList(lang) {
     const allExercises = Object.values(TF.PROGRAM)
       .flatMap(s => s.exercises || [])
+      .flatMap(e => e._alternating ? e._alternating : [e])
       .filter((e, i, arr) => arr.findIndex(x => x.id === e.id) === i)
       .sort((a, b) => a.name.localeCompare(b.name));
     const notes = TF.data.getCoachingNotes();
@@ -492,6 +493,7 @@ TF.settings = {
   _fuzzyMatch(pastedName) {
     const allExercises = Object.values(TF.PROGRAM)
       .flatMap(s => s.exercises || [])
+      .flatMap(e => e._alternating ? e._alternating : [e])
       .filter((e, i, arr) => arr.findIndex(x => x.id === e.id) === i);
 
     const q = pastedName.toLowerCase().trim();

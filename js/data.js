@@ -12,7 +12,10 @@ TF.data = {
     PRS: 'tf_prs',
     PIN: 'tf_pin_hash',
     LAST_ACTIVE: 'tf_last_active',
-    COACHING_NOTES: 'tf_coaching_notes'
+    COACHING_NOTES: 'tf_coaching_notes',
+    SCHEDULE_OFFSET: 'tf_schedule_offset',
+    SCHEDULE_LAST_CHECK: 'tf_schedule_last_check',
+    MANUAL_WORKOUT_DAYS: 'tf_manual_workout_days'
   },
 
   _get(key) {
@@ -275,6 +278,31 @@ TF.data = {
     if (data.cardio) this._set(this.KEYS.CARDIO, data.cardio);
     if (data.prs) this._set(this.KEYS.PRS, data.prs);
     if (data.coachingNotes) this._set(this.KEYS.COACHING_NOTES, data.coachingNotes);
+  },
+
+  // --- Schedule Offset (auto-rest-day shifting) ---
+  getScheduleOffset() {
+    return parseInt(localStorage.getItem(this.KEYS.SCHEDULE_OFFSET) || '0');
+  },
+  setScheduleOffset(n) {
+    localStorage.setItem(this.KEYS.SCHEDULE_OFFSET, String(n));
+  },
+
+  getScheduleLastCheck() {
+    return localStorage.getItem(this.KEYS.SCHEDULE_LAST_CHECK) || null;
+  },
+  setScheduleLastCheck(dateStr) {
+    localStorage.setItem(this.KEYS.SCHEDULE_LAST_CHECK, dateStr);
+  },
+
+  // --- Manual Workout Day Overrides (long-press selection) ---
+  getManualWorkoutDays() {
+    return this._get(this.KEYS.MANUAL_WORKOUT_DAYS) || {};
+  },
+  addManualWorkoutDay(dateStr, type) {
+    const days = this.getManualWorkoutDays();
+    days[dateStr] = type;
+    this._set(this.KEYS.MANUAL_WORKOUT_DAYS, days);
   },
 
   // --- Coaching Notes ---

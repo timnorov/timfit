@@ -72,6 +72,9 @@ TF.app = {
       if (!document.hidden) this._checkClipboardHealth();
     });
 
+    // Auto-rest-day detection: check for missed days since last app open
+    this._checkMissedDays();
+
     // Check for crash-recovered session
     const active = TF.data.getActiveSession();
     if (active && !active.completed) {
@@ -302,11 +305,14 @@ TF.app = {
     const strip = document.createElement('div');
     strip.className = 'week-strip';
     const dayKeys = ['day.mon','day.tue','day.wed','day.thu','day.fri','day.sat','day.sun'];
+    const manualDays = TF.data.getManualWorkoutDays();
     weekDates.forEach((dateStr, i) => {
       const logged = TF.data.getSessionByDate(dateStr);
       const isToday = dateStr === today;
-      const d = TF.utils.localDate(dateStr);
-      const isRest = d.getDay() === 0;
+      const manualType = manualDays[dateStr];
+      const { type: schedType } = TF.program.getSessionForDate(dateStr);
+      const effectiveType = manualType || schedType;
+      const isRest = effectiveType === 'Rest';
       let cls = 'week-day';
       let icon = '';
       if (isRest) { cls += ' rest'; icon = '💤'; }
@@ -316,7 +322,28 @@ TF.app = {
       const pill = document.createElement('div');
       pill.className = cls;
       pill.innerHTML = `<div class="wd-label">${TF.i18n.t(dayKeys[i])}</div><div class="wd-icon">${icon}</div>`;
-      pill.onclick = () => this._showDayDetail(dateStr);
+
+      // Long-press (500ms) to select any workout for this day
+      let pressTimer = null;
+      let didLongPress = false;
+      const startPress = () => {
+        didLongPress = false;
+        pressTimer = setTimeout(() => {
+          didLongPress = true;
+          pressTimer = null;
+          TF.utils.vibrate([30]);
+          this._showWorkoutSelectModal(dateStr);
+        }, 500);
+      };
+      const cancelPress = () => { clearTimeout(pressTimer); pressTimer = null; };
+      pill.addEventListener('touchstart', startPress, { passive: true });
+      pill.addEventListener('touchend', cancelPress);
+      pill.addEventListener('touchcancel', cancelPress);
+      pill.addEventListener('mousedown', startPress);
+      pill.addEventListener('mouseup', cancelPress);
+      pill.addEventListener('mouseleave', cancelPress);
+      pill.onclick = () => { if (didLongPress) { didLongPress = false; return; } this._showDayDetail(dateStr); };
+
       strip.appendChild(pill);
     });
     weekSection.appendChild(strip);
@@ -503,6 +530,80 @@ TF.app = {
         </button>`;
         modal.appendChild(startBtn);
       }
+    }
+  },
+
+  // --- Auto-rest-day detection ---
+  _checkMissedDays() {
+    const lastCheck = TF.data.getScheduleLastCheck();
+    const today = TF.utils.todayStr();
+
+    if (!lastCheck) {
+      TF.data.setScheduleLastCheck(today);
+      return;
+    }
+
+    if (lastCheck >= today) return;
+
+    const manualDays = TF.data.getManualWorkoutDays();
+    let offset = TF.data.getScheduleOffset();
+
+    let check = TF.utils.localDate(lastCheck);
+    check.setDate(check.getDate() + 1);
+    const todayDate = TF.utils.localDate(today);
+
+    while (check < todayDate) {
+      const dateStr = TF.utils.formatShortDate(check);
+      const { type } = TF.program.getSessionForDate(dateStr);
+      if (type !== 'Rest') {
+        const logged = TF.data.getSessionByDate(dateStr);
+        if (!logged && !manualDays[dateStr]) {
+          offset++;
+        }
+      }
+      check.setDate(check.getDate() + 1);
+    }
+
+    TF.data.setScheduleOffset(offset);
+    TF.data.setScheduleLastCheck(today);
+  },
+
+  // --- Long-press workout selection ---
+  _showWorkoutSelectModal(dateStr) {
+    const lang = TF.i18n.getLang();
+    const options = ['Push A', 'Pull A', 'Legs A', 'Push B', 'Pull B', 'Legs B'];
+    const overlay = document.createElement('div');
+    overlay.className = 'workout-select-overlay';
+    const optionHtml = options.map(opt =>
+      `<button class="wsm-option" onclick="TF.app._selectWorkoutForDay('${dateStr}','${opt}')">${opt}</button>`
+    ).join('');
+    overlay.innerHTML = `
+      <div class="workout-select-modal">
+        <div class="wsm-handle"></div>
+        <div class="wsm-title">${lang === 'ru' ? 'Выберите тренировку' : 'Select Workout'}</div>
+        <div class="wsm-date">${TF.utils.formatDate(dateStr, lang)}</div>
+        <div class="wsm-options">${optionHtml}
+          <button class="wsm-option wsm-rest" onclick="TF.app._selectWorkoutForDay('${dateStr}','Rest')">
+            💤 ${lang === 'ru' ? 'День отдыха' : 'Rest Day'}
+          </button>
+        </div>
+        <button class="wsm-cancel" onclick="document.querySelector('.workout-select-overlay').remove()">
+          ${lang === 'ru' ? 'Отмена' : 'Cancel'}
+        </button>
+      </div>
+    `;
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    document.body.appendChild(overlay);
+  },
+
+  _selectWorkoutForDay(dateStr, workoutType) {
+    document.querySelector('.workout-select-overlay')?.remove();
+    TF.data.addManualWorkoutDay(dateStr, workoutType);
+    const today = TF.utils.todayStr();
+    if (dateStr === today && workoutType !== 'Rest') {
+      TF.workout.startSession(workoutType);
+    } else {
+      this.renderDashboard();
     }
   },
 

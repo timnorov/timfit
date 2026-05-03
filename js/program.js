@@ -127,19 +127,17 @@ TF.PROGRAM = {
         startingWeight: 20
       },
       {
-        id: 'cable_face_pull',
-        name: 'Cable Face Pull',
-        gif: 'assets/gifs/cable_face_pull.png',
-        muscles: ['Rear Delts', 'Rotator Cuff', 'Upper Traps'],
-        muscleKeys: ['muscle.rear.delts', 'muscle.traps'],
-        sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '6–7',
-        equipment: 'Cable machine + rope attachment',
-        handle: 'Rope attachment',
-        pulley: 'Face height (eye level)',
-        grip: 'Overhand, thumbs pointing behind you',
-        cuesEn: 'Pull toward forehead, splitting rope apart. Elbows end above shoulder height pointed outward. MANDATORY every push day — shoulder health is non-negotiable. Light weight, full range. Counteracts internal rotation stress from all pressing.',
-        cuesRu: 'Тяните к лбу, разводя верёвку в стороны. Локти заканчивают движение выше плеч, направлены наружу. ОБЯЗАТЕЛЬНО в каждый день жимов — здоровье плеч прежде всего. Лёгкий вес, полная амплитуда. Компенсирует внутреннюю ротацию плеча от жимовых упражнений.',
-        startingWeight: 20
+        id: 'rear_delt_machine_push_a',
+        name: 'Rear Delt Machine',
+        gif: 'assets/gifs/rear_delt_machine.png',
+        muscles: ['Rear Deltoid', 'Infraspinatus', 'Teres Minor'],
+        muscleKeys: ['muscle.rear.delts', 'muscle.back'],
+        sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '7',
+        equipment: 'Pec fly / rear delt combo machine set to REAR DELT mode',
+        grip: 'Neutral, arms extended forward grabbing rear delt handles (NOT the chest fly handles)',
+        cuesEn: 'Adjust seat so handles are at exact shoulder height. Select REAR DELT mode on the machine (arms sweep backward, not inward). Sit tall with chest against pad. Sweep both arms backward in a wide arc, pause 1 sec at maximum rear position — squeeze rear delts. Do NOT shrug or involve traps. Return slowly, 2-sec eccentric. Light weight, full range of motion, full squeeze at peak.',
+        cuesRu: 'Отрегулируйте сиденье так, чтобы ручки были точно на уровне плеч. Выберите режим ЗАДНИЕ ДЕЛЬТЫ на тренажёре (руки движутся назад, а не внутрь). Сидите прямо, грудь прижата к подушке. Разведите обе руки назад по широкой дуге, задержитесь 1 секунду в крайнем заднем положении — сожмите задние дельты. НЕ поднимайте плечи. Медленный возврат, эксцентрик 2 секунды. Лёгкий вес, полная амплитуда.',
+        startingWeight: 12
       }
     ]
   },
@@ -193,19 +191,17 @@ TF.PROGRAM = {
         startingWeight: 60
       },
       {
-        id: 'cable_face_pull_pull_a',
-        name: 'Cable Face Pull',
-        gif: 'assets/gifs/cable_face_pull.png',
-        muscles: ['Rear Delts', 'Rotator Cuff', 'Upper Traps'],
-        muscleKeys: ['muscle.rear.delts', 'muscle.traps'],
-        sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '6–7',
-        equipment: 'Cable machine + rope attachment',
-        handle: 'Rope attachment',
-        pulley: 'Face height (eye level)',
-        grip: 'Overhand, thumbs pointing behind you',
-        cuesEn: 'Pull toward forehead, splitting rope apart. Elbows end above shoulder height pointed outward. Shoulder health maintenance — included every session.',
-        cuesRu: 'Тяните к лбу, разводя верёвку в стороны. Локти заканчивают выше плеч, направлены наружу. Профилактика плечевых суставов — включено в каждую тренировку.',
-        startingWeight: 20
+        id: 'rear_delt_machine_pull_a',
+        name: 'Rear Delt Machine',
+        gif: 'assets/gifs/rear_delt_machine.png',
+        muscles: ['Rear Deltoid', 'Infraspinatus', 'Teres Minor'],
+        muscleKeys: ['muscle.rear.delts', 'muscle.back'],
+        sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '7',
+        equipment: 'Pec fly / rear delt combo machine set to REAR DELT mode',
+        grip: 'Neutral, arms extended forward grabbing rear delt handles (NOT the chest fly handles)',
+        cuesEn: 'Adjust seat so handles are at exact shoulder height. Select REAR DELT mode. Sit tall with chest against pad. Sweep both arms backward in a wide arc, pause 1 sec at maximum rear position — squeeze rear delts. Do NOT shrug or involve traps. Return slowly, 2-sec eccentric. Light weight, full range of motion.',
+        cuesRu: 'Отрегулируйте сиденье так, чтобы ручки были точно на уровне плеч. Выберите режим ЗАДНИЕ ДЕЛЬТЫ. Сидите прямо, грудь прижата к подушке. Разведите обе руки назад по широкой дуге, задержитесь 1 секунду — сожмите задние дельты. НЕ поднимайте плечи. Медленный возврат, эксцентрик 2 секунды. Лёгкий вес, полная амплитуда.',
+        startingWeight: 12
       },
       {
         id: 'ez_bar_curl',
@@ -311,19 +307,20 @@ TF.PROGRAM = {
         startingWeight: 60
       },
       {
-        id: 'cable_crunch',
-        name: 'Cable Crunch (Kneeling)',
-        gif: 'assets/gifs/cable_crunch.png',
-        muscles: ['Rectus Abdominis', 'Obliques'],
+        id: 'pallof_press',
+        name: 'Pallof Press',
+        gif: 'assets/gifs/pallof_press.png',
+        muscles: ['Transverse Abdominis', 'Obliques', 'Glutes'],
         muscleKeys: ['muscle.core'],
-        sets: 3, repsMin: 12, repsMax: 15, rest: 60, rpe: '7',
-        equipment: 'Cable machine + rope attachment',
-        handle: 'Rope',
-        pulley: 'Highest position (overhead)',
-        grip: 'Hold rope at temples',
-        cuesEn: 'Kneel facing stack. FLEX THE SPINE — round upper back toward knees. Do NOT hinge at hips. Elbows drive toward knees. Full extension at top before next rep.',
-        cuesRu: 'Встаньте на колени лицом к стойке. СГИБАЙТЕ ПОЗВОНОЧНИК — скругляйте верхнюю часть спины к коленям. НЕ наклоняйтесь в тазобедренном суставе. Локти тянутся к коленям. Полное разгибание вверху перед следующим повторением.',
-        startingWeight: 30
+        sets: 3, repsMin: 12, repsMax: 12, rest: 60, rpe: '7',
+        equipment: 'Cable machine + D-handle',
+        handle: 'D-handle',
+        pulley: 'Mid height (belly button level)',
+        grip: 'Both hands clasped on handle, perpendicular to cable',
+        note: 'Per side',
+        cuesEn: 'Stand sideways to the cable stack, feet shoulder-width. Hold the handle with both hands at chest height. Press straight OUT in front of you until arms are fully extended — resist the rotational pull of the cable. Hold 1–2 sec at full extension. Pull back to chest. NEVER let the cable rotate your torso — this is anti-rotation core work. Keep hips squared forward, core braced 360°. No leaning away from the stack. Complete all reps on one side, then switch.',
+        cuesRu: 'Встаньте боком к тросовой стойке, ноги на ширине плеч. Держите ручку обеими руками на уровне груди. Нажмите ПРЯМО перед собой, пока руки не выпрямятся — сопротивляйтесь вращательному усилию троса. Задержитесь 1–2 секунды в выпрямленном положении. Верните к груди. НИКОГДА не позволяйте тросу вращать ваш торс — это антиротационная тренировка кора. Бёдра смотрят строго вперёд, кор зафиксирован на 360°. Без наклона от стойки. Выполните все повторения на одну сторону, затем смените.',
+        startingWeight: 10
       }
     ]
   },
@@ -435,19 +432,17 @@ TF.PROGRAM = {
         startingWeight: 25
       },
       {
-        id: 'cable_face_pull_push_b',
-        name: 'Cable Face Pull',
-        gif: 'assets/gifs/cable_face_pull.png',
-        muscles: ['Rear Delts', 'Rotator Cuff', 'Upper Traps'],
-        muscleKeys: ['muscle.rear.delts', 'muscle.traps'],
-        sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '6–7',
-        equipment: 'Cable machine + rope attachment',
-        handle: 'Rope attachment',
-        pulley: 'Face height (eye level)',
-        grip: 'Overhand, thumbs pointing behind you',
-        cuesEn: 'Pull toward forehead, splitting rope apart. Elbows end above shoulder height pointed outward. Mandatory push day shoulder health exercise.',
-        cuesRu: 'Тяните к лбу, разводя верёвку в стороны. Локти заканчивают выше плеч, направлены наружу. Обязательное упражнение для здоровья плеч в день жимов.',
-        startingWeight: 20
+        id: 'rear_delt_machine_push_b',
+        name: 'Rear Delt Machine',
+        gif: 'assets/gifs/rear_delt_machine.png',
+        muscles: ['Rear Deltoid', 'Infraspinatus', 'Teres Minor'],
+        muscleKeys: ['muscle.rear.delts', 'muscle.back'],
+        sets: 3, repsMin: 15, repsMax: 20, rest: 60, rpe: '7',
+        equipment: 'Pec fly / rear delt combo machine set to REAR DELT mode',
+        grip: 'Neutral, arms extended forward grabbing rear delt handles (NOT the chest fly handles)',
+        cuesEn: 'Adjust seat so handles are at exact shoulder height. Select REAR DELT mode. Sit tall with chest against pad. Sweep both arms backward in a wide arc, pause 1 sec at maximum rear position — squeeze rear delts. Do NOT shrug or involve traps. Return slowly, 2-sec eccentric. Light weight, full range of motion.',
+        cuesRu: 'Отрегулируйте сиденье так, чтобы ручки были точно на уровне плеч. Выберите режим ЗАДНИЕ ДЕЛЬТЫ. Сидите прямо, грудь прижата к подушке. Разведите обе руки назад по широкой дуге, задержитесь 1 секунду — сожмите задние дельты. НЕ поднимайте плечи. Медленный возврат, эксцентрик 2 секунды. Лёгкий вес, полная амплитуда.',
+        startingWeight: 12
       }
     ]
   },
@@ -687,15 +682,23 @@ TF.program = {
   },
 
   getTodaySession() {
-    const day = new Date().getDay();
-    const type = TF.DAY_SESSION_MAP[day];
-    return { type, session: TF.PROGRAM[type] };
+    return this.getSessionForDate(TF.utils.todayStr());
   },
 
   getSessionForDate(dateStr) {
     const d = TF.utils.localDate(dateStr);
-    const day = d.getDay();
-    const type = TF.DAY_SESSION_MAP[day];
+    const rawDay = d.getDay();
+    const offset = TF.data ? (TF.data.getScheduleOffset() || 0) : 0;
+    if (offset === 0) {
+      const type = TF.DAY_SESSION_MAP[rawDay];
+      return { type, session: TF.PROGRAM[type] };
+    }
+    // PPL cycle in day-of-week order (Mon–Sun)
+    const cycle = ['Push A', 'Pull A', 'Legs A', 'Push B', 'Pull B', 'Legs B', 'Rest'];
+    const dayToCycle = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 0: 6 };
+    const basePos = dayToCycle[rawDay];
+    const shiftedPos = ((basePos - offset) % 7 + 7) % 7;
+    const type = cycle[shiftedPos];
     return { type, session: TF.PROGRAM[type] };
   },
 

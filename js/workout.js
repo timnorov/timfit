@@ -8,18 +8,30 @@ TF.workout = {
   _sessionStartTime: null,
   _elapsedInterval: null,
   _warmupChecked: [false, false, false],
-  _lastSetCompletedAt: null,
-  _inactivityInterval: null,
-  INACTIVITY_LIMIT_MS: 15 * 60 * 1000, // 15 minutes
 
   // --- Init ---
   init() {
     this._timerWorker = new Worker('./timer-worker.js');
     this._timerWorker.onmessage = (e) => this._onTimerMessage(e.data);
 
-    // Restore timer if app regains focus
+    // Restore timer when app regains focus (iOS kills the Web Worker when backgrounded)
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && this._timerRunning) {
+      if (document.hidden || !this._timerRunning) return;
+      const raw = localStorage.getItem('tf_active_timer');
+      if (raw) {
+        try {
+          const { startTimestamp, duration } = JSON.parse(raw);
+          const remaining = Math.ceil((startTimestamp + duration * 1000 - Date.now()) / 1000);
+          if (remaining <= 0) {
+            this._onTimerComplete();
+          } else {
+            // Worker may have been killed — restart it with the corrected remaining time
+            this._timerWorker.postMessage({ type: 'START', duration: remaining });
+          }
+        } catch(e) {
+          this._timerWorker.postMessage({ type: 'SYNC' });
+        }
+      } else {
         this._timerWorker.postMessage({ type: 'SYNC' });
       }
     });
@@ -84,14 +96,12 @@ TF.workout = {
     TF.data.saveActiveSession(this._session);
     this._sessionStartTime = now;
     this._warmupChecked = [false, false, false];
-    this._lastSetCompletedAt = now;
 
     this._renderSessionScreen();
     document.getElementById('activeWorkout').classList.remove('hidden');
 
     // Start elapsed timer
     this._startElapsedTimer();
-    this._startInactivityCheck();
   },
 
   // --- Resume Session ---
@@ -104,7 +114,6 @@ TF.workout = {
     this._renderSessionScreen();
     document.getElementById('activeWorkout').classList.remove('hidden');
     this._startElapsedTimer();
-    this._startInactivityCheck();
     TF.app.hidePrimaryResumeBanner();
 
     // Restore rest timer if it was running when app was closed
@@ -199,15 +208,12 @@ TF.workout = {
       <div class="warmup-subtitle">${TF.i18n.t('session.warmup.subtitle')}</div>
       ${TF.APT_WARMUP.map((w, i) => `
         <div class="warmup-item">
-          <div class="warmup-cb" data-warmup="${i}" onclick="TF.workout._toggleWarmup(${i}, this)">
+          <div class="warmup-cb${this._warmupChecked[i] ? ' checked' : ''}" data-warmup="${i}" onclick="TF.workout._toggleWarmup(${i}, this)">
+            ${this._warmupChecked[i] ? '✓' : ''}
           </div>
           <span class="warmup-label">${TF.i18n.t(w.key)}</span>
         </div>
       `).join('')}
-      <button class="btn btn-sm" id="beginWorkoutBtn" style="margin-top:12px;background:white;color:#FF9500;opacity:0.5;pointer-events:none;"
-        onclick="TF.workout._onBeginWorkout()">
-        ${TF.i18n.t('session.warmup.begin')}
-      </button>
     `;
     return card;
   },
@@ -235,8 +241,6 @@ TF.workout = {
     const log = this._session.exerciseLogs[exIdx];
     const lang = TF.i18n.getLang();
     const cues = lang === 'ru' ? ex.cuesRu : ex.cuesEn;
-    const lastLog = TF.data.getLastLogForExercise(ex.id);
-    const showOverloadBadge = this._checkOverloadReady(lastLog, ex);
     const allDone = log.sets.every(s => s.completed);
     const isExpanded = exIdx === this._expandedExIdx;
     const completedCount = log.sets.filter(s => s.completed).length;
@@ -286,14 +290,6 @@ TF.workout = {
     card.appendChild(header);
 
     if (!isExpanded) return card; // collapsed — only show header
-
-    // Overload badge
-    if (showOverloadBadge) {
-      const badge = document.createElement('div');
-      badge.className = 'ex-overload-badge';
-      badge.innerHTML = `<span>↑</span> ${TF.i18n.t('ex.ready.add')}`;
-      card.appendChild(badge);
-    }
 
     // Coaching note (if set)
     const coachingNote = TF.data.getCoachingNote(ex.id);
@@ -415,7 +411,6 @@ TF.workout = {
 
     set.completed = true;
     set.completedAt = Date.now();
-    this._lastSetCompletedAt = Date.now();
 
     // Auto-copy weight + reps to the immediately next uncompleted set (sets 2, 3, 4)
     const nextSet = this._session.exerciseLogs[exIdx].sets[setIdx + 1];
@@ -774,6 +769,10 @@ TF.workout = {
     TF.utils.vibrateTimerEnd();
     TF.notifications.playTimerEnd();
 
+    // Fire notification immediately — SW setTimeout is unreliable on iOS when backgrounded
+    TF.notifications.cancelRestNotif();
+    TF.notifications.showTimerDone();
+
     // Flash red then dismiss
     const countdown = document.getElementById('timerCountdown');
     if (countdown) {
@@ -781,19 +780,11 @@ TF.workout = {
       countdown.classList.add('urgent');
     }
 
-    // SW already handles the scheduled notification — no duplicate needed here
-
     setTimeout(() => {
       this._hideTimerSheet();
       this._hideMiniTimer();
       if (countdown) countdown.classList.remove('urgent');
     }, 1500);
-  },
-
-  // --- Session completion check ---
-  _checkOverloadReady(lastLog, ex) {
-    if (!lastLog) return false;
-    return lastLog.sets.every(s => s.completed && s.reps >= ex.repsMax);
   },
 
   // --- Exercise GIF Modal ---
@@ -902,45 +893,6 @@ TF.workout = {
     TF.app.showToast(TF.i18n.t('session.saved'));
   },
 
-  // --- Inactivity Auto-Complete ---
-  _startInactivityCheck() {
-    clearInterval(this._inactivityInterval);
-    this._inactivityInterval = setInterval(() => {
-      if (!this._session || this._session.completed) {
-        clearInterval(this._inactivityInterval);
-        return;
-      }
-      const idle = Date.now() - (this._lastSetCompletedAt || this._sessionStartTime || Date.now());
-      if (idle >= this.INACTIVITY_LIMIT_MS) {
-        clearInterval(this._inactivityInterval);
-        this._autoCompleteSession();
-      }
-    }, 60000);
-  },
-
-  _autoCompleteSession() {
-    if (!this._session || this._session.completed) return;
-    this._stopTimers();
-
-    const now = Date.now();
-    this._session.endTime = now;
-    this._session.completed = true;
-    this._session.duration = Math.round((now - this._session.startTime) / 1000);
-    this._session.totalVolume = this._calculateVolume();
-
-    TF.data.saveSession(this._session);
-    TF.data.clearActiveSession();
-
-    // Show inactivity banner
-    const lang = TF.i18n.getLang();
-    const msg = lang === 'ru'
-      ? 'Тренировка завершена автоматически после 15 минут бездействия.'
-      : 'Session auto-completed due to 15 minutes of inactivity.';
-    TF.app.showToast(msg);
-
-    this._showSummary();
-  },
-
   // --- Elapsed Timer ---
   _startElapsedTimer() {
     clearInterval(this._elapsedInterval);
@@ -954,7 +906,6 @@ TF.workout = {
 
   _stopTimers() {
     clearInterval(this._elapsedInterval);
-    clearInterval(this._inactivityInterval);
     this._timerWorker.postMessage({ type: 'STOP' });
     this._timerRunning = false;
     this._arcTarget = null;

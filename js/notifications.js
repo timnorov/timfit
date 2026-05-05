@@ -189,6 +189,29 @@ TF.notifications = {
     });
   },
 
+  // Show timer-done notification immediately (not scheduled).
+  // Called by workout.js when the timer actually fires — avoids relying on
+  // SW setTimeout which iOS kills when the app is backgrounded.
+  showTimerDone() {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    const lang = TF.i18n ? TF.i18n.getLang() : 'en';
+    const body = lang === 'ru' ? 'Отдых завершён — начинайте следующий подход!' : 'Rest complete — start your next set!';
+    try {
+      if (this._swReg) {
+        this._swReg.showNotification('TimFit', {
+          body,
+          tag: 'rest-complete',
+          icon: './assets/icons/icon-192.png',
+          badge: './assets/icons/icon-192.png',
+          vibrate: [200, 100, 200],
+          silent: false
+        });
+      } else {
+        new Notification('TimFit', { body, icon: './assets/icons/icon-192.png' });
+      }
+    } catch(e) {}
+  },
+
   // Initialize audio context on first user interaction (iOS requirement)
   unlockAudio() {
     if (!this._audioCtx) {
